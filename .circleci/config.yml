@@ -46,7 +46,7 @@ commands:
             sudo rm -rf /usr/local/lib/python2.7/dist-packages/pip
             sudo rm -rf /usr/local/lib/python3.4/dist-packages/pip
             sudo apt install python-pip python3-pip
-            sudo apt-get install -y python3.4=5-dev python3-pip
+            sudo apt-get install -y python3.5-dev python3-pip
             sed -i '1s;^;alias python=python3\n;' $BASH_ENV
       - run:
           name: Run buildout
