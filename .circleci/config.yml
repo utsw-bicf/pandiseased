@@ -4,25 +4,25 @@ orbs:
     browser-tools: circleci/browser-tools@0.1.0
 
 executors:
-  encoded-executor:
+  pandiseased-executor:
     docker:
       - image: circleci/buildpack-deps:trusty
     working_directory: ~/encoded
     environment:
       - BASH_ENV: /home/circleci/.bashrc
-      - ES_JAVA_OPTS: -Xms4g -Xmx4g
+      - ES_JAVA_OPTS: -Xms2g -Xmx2g
       - JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
 
 commands:
   buildout:
-    description: A buildout process based on encoded-executor
+    description: A buildout process based on pandiseased-executor
     steps:
       - checkout
       # Do not use caching for now to avoid potential conflicts/bugs
       - run:
           name: Add apt repositories
           command: |
-            sudo apt-get update && sudo apt-get install apt-transport-https software-properties-common
+            sudo apt-get install apt-transport-https software-properties-common
             wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
             echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-6.x.list
             curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo apt-key add -
@@ -46,32 +46,39 @@ commands:
       - run:
           name: Run buildout
           command: |
-            sudo pip3 install --upgrade pip==19.1.1
+            ssudo pip3 install --upgrade pip==19.1.1
             sudo pip3 install -U zc.buildout setuptools==43
             buildout bootstrap
             bin/buildout
 jobs:
-  npm-not-bdd:
-    executor: encoded-executor
-    resource_class: large
+  npm-non-bdd-tests:
+    executor: pandiseased-executor
+    # indexing tests fail using default medium resource_class
+    resource_class: medium
+    parallelism: 2
     steps:
       - buildout
       - run:
-          name: NPM and non ES indexing tests
+          name: NPM and non BDD tests
           command: |
-            npm run circleci-test
-            bin/test -s -vv -m "not bdd"
-  bdd:
-    executor: encoded-executor
-    resource_class: large
+            npm test
+            bin/test -m "not bdd" --collect-only -qq |
+              while read test; do
+                [ -z "$test" ] && break
+                echo ${test%:*}
+              done | sort | circleci tests split | xargs -n 1 -t bin/test -v -v --timeout=400 -k
+  bdd-tests:
+    executor: pandiseased-executor
+    resource_class: medium
     steps:
       - buildout
+      # Use install tasks from the orb
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
       - run:
           name: Run bdd tests
           command: |
-            bin/test -s -vv -m "bdd" --tb=short \
+            bin/test -v -v --timeout=400 -m "bdd" --tb=short \
               --splinter-implicit-wait 10 \
               --splinter-webdriver chrome \
               --splinter-socket-timeout 300 \
@@ -82,5 +89,5 @@ workflows:
   version: 2
   encoded-tests:
     jobs:
-      - npm-not-bdd
-      - bdd
+      - bdd-tests
+      - npm-non-bdd-tests
