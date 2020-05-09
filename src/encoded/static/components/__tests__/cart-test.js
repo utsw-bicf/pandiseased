@@ -73,7 +73,7 @@ describe('Cart actions', () => {
             const newState = cartModule(state, { type: REMOVE_FROM_CART, elementAtId: '/patient/KCEPT708IJT/' });
             expect(newState.elements).toHaveLength(2);
             expect(newState.elements[0]).toEqual('/patient/KCEPT359MHZ/');
-            expect(newState.elements[1]).toEqual('/patient/KCEPT026PGS');
+            expect(newState.elements[1]).toEqual('/patient/KCEPT026PGS/');
             expect(newState).not.toEqual(state);
         });
 
@@ -83,7 +83,7 @@ describe('Cart actions', () => {
         });
 
         test('REMOVE_MULTIPLE_FROM_CART works and does not mutate state', () => {
-            const newState = cartModule(state, { type: REMOVE_MULTIPLE_FROM_CART, elementAtIds: ['/patient/KCEPT359MHZ/', '/patient/KCEPT026PGS'] });
+            const newState = cartModule(state, { type: REMOVE_MULTIPLE_FROM_CART, elementAtIds: ['/patient/KCEPT359MHZ/', '/patient/KCEPT026PGS/'] });
             expect(newState.elements).toHaveLength(1);
             expect(newState.elements[0]).toEqual('/patient/KCEPT708IJT/');
             expect(newState).not.toEqual(state);
@@ -292,7 +292,7 @@ describe('Cart manager while logged in as submitter', () => {
 
     test('the cart count is correct', () => {
         const tableCount = cartManager.find('.cart-counts');
-        expect(tableCount.text()).toEqual('3 carts (30 maximum)');
+        expect(tableCount.text()).toEqual('3 cohorts (30 maximum)');
     });
 
     test('the column count is correct', () => {
