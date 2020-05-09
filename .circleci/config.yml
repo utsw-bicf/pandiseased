@@ -32,6 +32,7 @@ commands:
       - run:
           name: Install dependencies
           command: |
+           sudo apt-get update --fix-missing &
             sudo apt-get install -y \
               bsdtar \
               elasticsearch \
