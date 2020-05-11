@@ -140,7 +140,6 @@ def test_load_sample_data(
         target,
         ucsc_browser_composite,
         patient,
-        lab_results,
         cart
         ):
     assert True, 'Fixtures have loaded sample data'
@@ -390,4 +389,3 @@ def test_profiles(testapp, item_type):
 def test_bad_frame(testapp, human):
     res = testapp.get(human['@id'] + '?frame=bad', status=404)
     assert res.json['detail'] == '?frame=bad'
-
