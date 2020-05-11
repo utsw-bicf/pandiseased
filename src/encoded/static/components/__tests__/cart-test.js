@@ -412,7 +412,7 @@ describe('Cart manager while logged in as admin', () => {
 
     test('the cart count is correct', () => {
         const tableCount = cartManager.find('.cart-counts');
-        expect(tableCount.text()).toEqual('3 carts (30 maximum)');
+        expect(tableCount.text()).toEqual('3 cohorts (30 maximum)');
     });
 
     test('the column count is correct', () => {
