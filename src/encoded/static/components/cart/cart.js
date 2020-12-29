@@ -907,8 +907,12 @@ const CartTools = ({ elements, selectedTerms, savedCartObj, viewableDatasets, fi
             />
         : null}
         {cartType === 'OBJECT' ? <CartMergeShared sharedCartObj={sharedCart} viewableDatasets={viewableDatasets} /> : null}
-        {cartType === 'ACTIVE' ? <CartLockTrigger savedCartObj={savedCartObj} inProgress={inProgress} /> : null}
-        {cartType === 'ACTIVE' || cartType === 'MEMORY' ? <CartClearButton /> : null}
+        {cartType === 'ACTIVE' ?
+            <div className="cart-tools-extras">
+                <CartLockTrigger savedCartObj={savedCartObj} inProgress={inProgress} />
+                <CartClearButton />
+            </div>
+        : null}
         <CartDatasetSearch elements={elements} />
     </div>
 );

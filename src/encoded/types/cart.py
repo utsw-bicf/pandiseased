@@ -109,7 +109,7 @@ def get_or_create_cart_by_user(context, request):
 def create_cart_by_user(context, request):
     userid = get_userid(request)
     user = _get_user(request, userid)
-    is_admin = 'group.admin' in request.effective_principals 
+    is_admin = 'group.admin' in request.effective_principals
     blocked_statuses = ['deleted'] if not is_admin else []
     cart_max_count = CART_ADMIN_MAX if is_admin else CART_USER_MAX
     carts = get_cart_objects_by_user(request, userid, blocked_statuses=blocked_statuses)
@@ -140,7 +140,7 @@ def create_cart_by_user(context, request):
         user,
         name=cart_name,
         identifier=cart_identifier,
-        status=cart_status
+        status=cart_statu
     )
     request.response.status = 200
     return {
