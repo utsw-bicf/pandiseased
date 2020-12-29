@@ -237,8 +237,12 @@ class PatientComponent extends React.Component {
                         <div className="result-item__meta-id">{` ${result.accession}`}</div>
                         <Status item={result.status} badgeSize="small" css="result-table__status" />
                         {this.props.auditIndicators(result.audit, result['@id'], { session: this.context.session, search: true })}
-
                     </div>
+                    {cartControls ?
+                        <div className="result-item__cart-control">
+                            <CartToggle element={result} />
+                        </div>
+                    : null}
                     <PickerActions {...this.props} />
                 </div>
                 {this.props.auditDetail(result.audit, result['@id'], { session: this.context.session, except: result['@id'], forcedEditLink: true })}
@@ -289,7 +293,7 @@ class PathologyComponent extends React.Component {
                         <Status item={result.status} badgeSize="small" css="result-table__status" />
                         {this.props.auditIndicators(result.audit, result['@id'], { session: this.context.session, search: true })}
                     </div>
-                    <PickerActions {...this.props} />    
+                    <PickerActions {...this.props} />
                 </div>
                 {this.props.auditDetail(result.audit, result['@id'], { session: this.context.session, except: result['@id'], forcedEditLink: true })}
             </li>
@@ -411,6 +415,7 @@ globals.listingViews.register(Biofile, 'Biofile');
 /* eslint-disable react/prefer-stateless-function */
 class BiospecimenComponent extends React.Component {
     render() {
+       const { cartControls } = this.props;
         const result = this.props.context;
         const tissueType = (result.tissue_type && result.sample_type == 'Tissue') ? ` ${result.tissue_type}` : '';
         const anatomicSite = (result.anatomic_site && result.sample_type == 'Tissue') ? ` ${result.anatomic_site}` : '';
@@ -434,10 +439,14 @@ class BiospecimenComponent extends React.Component {
                         <div className="result-item__meta-id">{` ${result.accession}`}</div>
                         <Status item={result.status} badgeSize="small" css="result-table__status" />
                         {this.props.auditIndicators(result.audit, result['@id'], { session: this.context.session, search: true })}
-
                     </div>
+                    {cartControls ?
+                        <div className="result-item__cart-control">
+                            <CartToggle element={result} />
+                        </div>
+                    : null}
                     <PickerActions {...this.props} />
-                    
+
                 </div>
                 {this.props.auditDetail(result.audit, result['@id'], { session: this.context.session, except: result['@id'], forcedEditLink: true })}
             </li>
@@ -449,6 +458,7 @@ class BiospecimenComponent extends React.Component {
 
 BiospecimenComponent.propTypes = {
     context: PropTypes.object.isRequired, // Biosample search results
+    cartControls: PropTypes.bool, // True if displayed in active cart
     auditIndicators: PropTypes.func.isRequired, // Audit decorator function
     auditDetail: PropTypes.func.isRequired, // Audit decorator function
 };
@@ -1228,5 +1238,3 @@ Search.lastRegion = {
 };
 
 globals.contentViews.register(Search, 'Search');
-
-
