@@ -140,7 +140,7 @@ def create_cart_by_user(context, request):
         user,
         name=cart_name,
         identifier=cart_identifier,
-        status=cart_statu
+        status=cart_status
     )
     request.response.status = 200
     return {
