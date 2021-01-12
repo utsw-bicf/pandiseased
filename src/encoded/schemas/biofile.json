@@ -785,6 +785,13 @@
                 }
             }
         },
+        "step_run": {
+            "title": "Analysis step run",
+            "description": "The run instance of the step used to generate the file.",
+            "comment": "This may be linked to an individual instance at DNANexus or it may be virtual and have many files linked to it.",
+            "type": "string",
+            "linkTo": "AnalysisStepRun"
+        },
         "status": {
             "title": "Status",
             "type": "string",
@@ -860,6 +867,9 @@
         },
         "date_created": {
             "title": "Date created"
+        },
+        "bioquality_metrics": {
+            "title": "QC Metric"
         },
         "status": {
             "title": "Status"
