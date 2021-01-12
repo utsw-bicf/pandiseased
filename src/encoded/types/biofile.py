@@ -52,7 +52,7 @@ class Biofile(Item):
     name_key = 'accession'
     rev = {
         'paired_with': ('Biofile', 'paired_with'),
-        'quality_metrics': ('QualityMetric', 'quality_metric_of'),
+        'bioquality_metrics': ('BioqualityMetric', 'bioquality_metric_of'),
         'superseded_by': ('Biofile', 'supersedes'),
     }
     embedded = [
@@ -62,13 +62,22 @@ class Biofile(Item):
         'bioreplicate.bioexperiment',
         'bioreplicate.biolibrary',
         'submitted_by',
-        'quality_metrics',
+        'bioquality_metrics',
+        'analysis_step_version.analysis_step',
+        'analysis_step_version.analysis_step.pipelines',
+        'analysis_step_version.software_versions',
+        'analysis_step_version.software_versions.software',
 
     ]
     audit_inherit = [
+        'analysis_step_version.analysis_step',
+        'analysis_step_version.analysis_step.pipelines',
+        'analysis_step_version.analysis_step.versions',
+        'analysis_step_version.software_versions',
+        'analysis_step_version.software_versions.software'
     ]
     set_status_up = [
-        'quality_metrics',
+        'bioquality_metrics',
         'platform',
         
 
@@ -138,12 +147,12 @@ class Biofile(Item):
         "type": "array",
         "items": {
             "type": ['string', 'object'],
-            "linkFrom": "QualityMetric.quality_metric_of",
+            "linkFrom": "BioqualityMetric.bioquality_metric_of",
         },
         "notSubmittable": True,
     })
-    def quality_metrics(self, request, quality_metrics):
-        return paths_filtered_by_status(request, quality_metrics)
+    def bioquality_metrics(self, request, bioquality_metrics):
+        return paths_filtered_by_status(request, bioquality_metrics)
 
     @calculated_property(schema={
         "title": "Analysis step version",
@@ -159,8 +168,8 @@ class Biofile(Item):
         step_version_uuid = step_run_obj.__json__(request).get('analysis_step_version')
         if step_version_uuid is not None:
             return request.resource_path(root[step_version_uuid])
-            
-     @calculated_property(schema={
+
+    @calculated_property(schema={
         "title": "Biological replicates",
         "description": "The biological replicate numbers associated with this file.",
         "comment": "Do not submit.  This field is calculated through the derived_from relationship back to the raw data.",
