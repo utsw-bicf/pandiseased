@@ -52,6 +52,7 @@ class Biofile(Item):
     name_key = 'accession'
     rev = {
         'paired_with': ('Biofile', 'paired_with'),
+        'quality_metrics': ('QualityMetric', 'quality_metric_of'),
         'superseded_by': ('Biofile', 'supersedes'),
     }
     embedded = [
@@ -61,11 +62,16 @@ class Biofile(Item):
         'bioreplicate.bioexperiment',
         'bioreplicate.biolibrary',
         'submitted_by',
+        'quality_metrics',
+
     ]
     audit_inherit = [
     ]
     set_status_up = [
+        'quality_metrics',
         'platform',
+        
+
 
     ]
     set_status_down = []
@@ -124,3 +130,64 @@ class Biofile(Item):
     def read_length_units(self, read_length=None, mapped_read_length=None):
         if read_length is not None or mapped_read_length is not None:
             return "nt"
+
+    @calculated_property(schema={
+        "title": "QC Metric",
+        "description": "The list of QC metric objects associated with this file.",
+        "comment": "Do not submit. Values in the list are reverse links of a quality metric with this file in quality_metric_of field.",
+        "type": "array",
+        "items": {
+            "type": ['string', 'object'],
+            "linkFrom": "QualityMetric.quality_metric_of",
+        },
+        "notSubmittable": True,
+    })
+    def quality_metrics(self, request, quality_metrics):
+        return paths_filtered_by_status(request, quality_metrics)
+
+    @calculated_property(schema={
+        "title": "Analysis step version",
+        "description": "The step version of the pipeline from which this file is an output.",
+        "comment": "Do not submit.  This field is calculated from step_run.",
+        "type": "string",
+        "linkTo": "AnalysisStepVersion"
+    })
+    def analysis_step_version(self, request, root, step_run=None):
+        if step_run is None:
+            return
+        step_run_obj = traverse(root, step_run)['context']
+        step_version_uuid = step_run_obj.__json__(request).get('analysis_step_version')
+        if step_version_uuid is not None:
+            return request.resource_path(root[step_version_uuid])
+            
+     @calculated_property(schema={
+        "title": "Biological replicates",
+        "description": "The biological replicate numbers associated with this file.",
+        "comment": "Do not submit.  This field is calculated through the derived_from relationship back to the raw data.",
+        "type": "array",
+        "items": {
+            "title": "Biological replicate number",
+            "description": "The identifying number of each relevant biological replicate",
+            "type": "integer",
+        }
+    })
+    def biological_replicates(self, request, registry, root, replicate=None):
+        if replicate is not None:
+            replicate_obj = traverse(root, replicate)['context']
+            replicate_biorep = replicate_obj.__json__(request)['biological_replicate_number']
+            return [replicate_biorep]
+
+        conn = registry[CONNECTION]
+        derived_from_closure = property_closure(request, 'derived_from', self.uuid)
+        dataset_uuid = self.__json__(request)['biodataset']
+        obj_props = (conn.get_by_uuid(uuid).__json__(request) for uuid in derived_from_closure)
+        replicates = {
+            props['bioreplicate']
+            for props in obj_props
+            if props['biodataset'] == dataset_uuid and 'bioreplicate' in props
+        }
+        bioreps = {
+            conn.get_by_uuid(uuid).__json__(request)['biological_replicate_number']
+            for uuid in replicates
+        }
+        return sorted(bioreps)
