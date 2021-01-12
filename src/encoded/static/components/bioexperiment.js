@@ -532,7 +532,8 @@ class Bioexperiment extends React.Component {
 
                     </PanelBody>
                 </Panel>
-                {<BioreplicateTable data={context.bioreplicate} tableTitle="Bioreplicates summary"></BioreplicateTable>}
+
+                {<BioreplicateTable data={context.bioreplicate} tableTitle={"Bioreplicates summary"+"("+context.replication_type+")"}></BioreplicateTable>}
                 {/* Display the file widget with the facet, graph, and tables */}
                 <FileGallery context={context} encodevers={encodevers} anisogenic={anisogenic} />
 
