@@ -111,3 +111,16 @@ class Biofile(Item):
     })
     def output_category(self, output_type):
         return self.schema['output_type_output_category'].get(output_type)
+    
+    @calculated_property(schema={
+        "title": "Read length units",
+        "description": "The units for read length.",
+        "comment": "Do not submit. This is a fixed value.",
+        "type": "string",
+        "enum": [
+            "nt"
+        ]
+    })
+    def read_length_units(self, read_length=None, mapped_read_length=None):
+        if read_length is not None or mapped_read_length is not None:
+            return "nt"
