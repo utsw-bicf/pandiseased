@@ -12,9 +12,9 @@ import { DocumentsPanelReq } from './doc';
 import { DbxrefList } from './dbxref';
 import { FetchedItems } from './fetched';
 import { FileGallery } from './filegallery';
-import { CartToggle } from './cart';
 import { ProjectBadge } from './image';
-import { singleTreatment, DisplayAsJson, InternalTags } from './objectutils';
+import { CartToggle } from './cart';
+import { singleTreatment, ItemAccessories, DisplayAsJson, InternalTags } from './objectutils';
 import pubReferenceList from './reference';
 import { SortTablePanel, SortTable } from './sorttable';
 import { BiosampleSummaryString, BiospecimenOrganismNames, CollectBiosampleDocs, AwardRef, ReplacementAccessions, ControllingExperiments } from './typeutils';
@@ -165,14 +165,13 @@ class Bioexperiment extends React.Component {
     render() {
 
         const context = this.props.context;
-        console.log('context', context);
+        const itemClass = globals.itemClass(context, 'view-item');
 
         let librarySpecials = {};
         let libraryComponents = {};
         let libSubmitterComments = [];
         const loggedIn = !!(this.context.session && this.context.session['auth.userid']);
         const adminUser = !!(this.context.session_properties && this.context.session_properties.admin);
-        const itemClass = globals.itemClass(context, 'view-item');
         const replicates = context.bioreplicate && context.bioreplicate.length ? context.bioreplicate : [];
         if (replicates.length) {
 
@@ -218,7 +217,6 @@ class Bioexperiment extends React.Component {
                 return null;
             }));
         }
-        console.log("libraryDoc", libraryDocs);
         // Create platforms array from file platforms; ignore duplicate platforms.
         const platforms = {};
         if (context.files && context.files.length) {
@@ -329,7 +327,6 @@ class Bioexperiment extends React.Component {
 
         //  const organismNames = BiosampleOrganismNames(biosamples);
         const organismNames = BiospecimenOrganismNames(biosamples);
-        console.log('organismName', organismNames);
         let nameQuery = '';
         let nameTip = '';
         const names = organismNames.map((organismName, i) => {
@@ -373,15 +370,17 @@ class Bioexperiment extends React.Component {
 
 
         return (
-            <div className={itemClass}>
-                <header>
+            <div className={globals.itemClass(context, 'view-item')}>
+                <header className="row">
+                  <div className="col-sm-12">
                     <Breadcrumbs root="/search/?type=Bioexperiment" crumbs={crumbs} crumbsReleased={crumbsReleased} />
-                    <h2>Experiment summary for {context.accession}</h2>
-                    <ReplacementAccessions context={context} />
                     <div className="cart__toggle--header">
                         <CartToggle element={context} />
                     </div>
-                    <DisplayAsJson />
+                    <h2>Experiment summary for {context.accession}</h2>
+                    <ReplacementAccessions context={context} />
+                    <ItemAccessories item={context}/>
+                  </div>
                 </header>
                 <Panel >
                     <PanelBody addClasses="panel__split">
