@@ -769,6 +769,22 @@
                 "None"
             ]
         },
+        "mapped_run_type": {
+            "comment": "Only bam files can have mapped_run_type specified.",
+            "properties": {
+                "file_format": {
+                    "enum": ["bam"]
+                }
+            }
+        },
+        "mapped_read_length": {
+            "comment": "Only bam files can have mapped_read_length specified.",
+            "properties": {
+                "file_format": {
+                    "enum": ["bam"]
+                }
+            }
+        },
         "status": {
             "title": "Status",
             "type": "string",
