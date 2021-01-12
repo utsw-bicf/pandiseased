@@ -1452,6 +1452,15 @@ class Patient(Item):
         },
     }
 
+    summary_matrix = {
+        'x': {
+            'group_by': 'surgery.pathology_report.histology_filter'
+        },
+        'y': {
+            'group_by': ['race', 'sex']
+        }
+    }
+
     summary_data = {
         'y': {
             'facets': [

@@ -85,19 +85,19 @@ class SummaryStatusChart extends React.Component {
 
         // Initialize data object to pass to createBarChart.
         const data = {
-            anisogenicDataset: null,
-            isogenicDataset: null,
-            unreplicatedDataset: null,
+            whiteDataset: null,
+            otherDataset: null,
+            asianDataset: null,
             labels: experimentStatuses,
         };
 
         // Convert statusData to a form createBarChart understands.
-        let facetData = statusData.find(facet => facet.key === 'anisogenic');
-        data.anisogenicDataset = facetData ? generateStatusData(facetData.status.buckets, data.labels) : [];
-        facetData = statusData.find(facet => facet.key === 'isogenic');
-        data.isogenicDataset = facetData ? generateStatusData(facetData.status.buckets, data.labels) : [];
-        facetData = statusData.find(facet => facet.key === 'unreplicated');
-        data.unreplicatedDataset = facetData ? generateStatusData(facetData.status.buckets, data.labels) : [];
+        let facetData = statusData.find(facet => facet.key === 'white');
+        data.whiteDataset = facetData ? generateStatusData(facetData.status.buckets, data.labels) : [];
+        facetData = statusData.find(facet => facet.key === 'other');
+        data.otherDataset = facetData ? generateStatusData(facetData.status.buckets, data.labels) : [];
+        facetData = statusData.find(facet => facet.key === 'asian');
+        data.asianDataset = facetData ? generateStatusData(facetData.status.buckets, data.labels) : [];
 
         // Generate colors to use for each replicate type.
         const colors = globals.replicateTypeColors.colorList(globals.replicateTypeList);
@@ -425,13 +425,29 @@ const Summary = (props) => {
     const { context } = props;
     const itemClass = globals.itemClass(context, 'view-item');
 
+
     if (context.total) {
         return (
             <Panel addClasses={itemClass}>
                 <PanelBody>
-                    <SummaryBody context={context} />
+                    <div className="search-results">
+                        <div className="search-results__facets">
+                            <FacetList context={context} facets={context.facets} filters={context.filters} searchBase={context.searchBase} />
+                        </div>
+                        <div className="search-results__report-list">
+                            <h4>Showing results</h4>
+                            <div className="results-table-control">
+                                <div className="results-table-control__main">
+                                    <ViewControls results={context} />
+                                </div>
+                            </div>
+                            <SummaryBody context={context} />
+
+                        </div>
+                    </div>
                 </PanelBody>
             </Panel>
+
         );
     }
     return <h4>No results found</h4>;
