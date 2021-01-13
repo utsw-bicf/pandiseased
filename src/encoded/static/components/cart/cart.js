@@ -1535,7 +1535,7 @@ const CartComponent = ({ context, elements, savedCartObj, loggedIn, inProgress, 
         if (pageNumbers.rawdata >= rawdataPageCount) {
             dispatchPageNumbers({ tab: 'rawdata', pageNumber: 0 });
         }
-    }, [cartPatients, selectedVisualizableFiles, selectedFiles, rawdataFiles, pageNumbers.datasets, pageNumbers.browser, pageNumbers.processeddata, pageNumbers.rawdata]);
+    }, [cartPatients, selectedVisualizableFiles, selectedFiles, rawdataFiles, pageNumbers.patients, pageNumbers.browser, pageNumbers.processeddata, pageNumbers.rawdata]);
 
     return (
         <div className={itemClass(context, 'view-item')}>
