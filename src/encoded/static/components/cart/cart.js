@@ -1401,11 +1401,11 @@ const CartComponent = ({ context, elements, savedCartObj, loggedIn, inProgress, 
     // Array of dataset @ids the user has access to view; subset of `datasets`; shared carts only.
     const [viewableDatasets, setViewableDatasets] = React.useState(null);
     // Currently displayed page number for each tab panes; for pagers.
-    const [pageNumbers, dispatchPageNumbers] = React.useReducer(reducerTabPanePageNumber, { datasets: 0, browser: 0, processeddata: 0, rawdata: 0 });
+    const [pageNumbers, dispatchPageNumbers] = React.useReducer(reducerTabPanePageNumber, { patients: 0, browser: 0, processeddata: 0, rawdata: 0 });
     // Total number of displayed pages for each tab pane; for pagers.
-    const [totalPageCount, dispatchTotalPageCounts] = React.useReducer(reducerTabPaneTotalPageCount, { datasets: 0, browser: 0, processeddata: 0, rawdata: 0 });
+    const [totalPageCount, dispatchTotalPageCounts] = React.useReducer(reducerTabPaneTotalPageCount, { patients: 0, browser: 0, processeddata: 0, rawdata: 0 });
     // Currently displayed tab; match key of first TabPanelPane initially.
-    const [displayedTab, setDisplayedTab] = React.useState('datasets');
+    const [displayedTab, setDisplayedTab] = React.useState('patients');
     // All currently selected partial file objects, visualizable or not.
     const [selectedFiles, setSelectedFiles] = React.useState([]);
     // All currently selected visualizable partial file objects.
