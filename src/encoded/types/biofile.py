@@ -52,7 +52,7 @@ class Biofile(Item):
     name_key = 'accession'
     rev = {
         'paired_with': ('Biofile', 'paired_with'),
-        'bioquality_metrics': ('BioqualityMetric', 'bioquality_metric_of'),
+        # 'bioquality_metrics': ('BioqualityMetric', 'bioquality_metric_of'),
         'superseded_by': ('Biofile', 'supersedes'),
     }
     embedded = [
@@ -62,22 +62,22 @@ class Biofile(Item):
         'bioreplicate.bioexperiment',
         'bioreplicate.biolibrary',
         'submitted_by',
-        'bioquality_metrics',
-        'analysis_step_version.analysis_step',
-        'analysis_step_version.analysis_step.pipelines',
-        'analysis_step_version.software_versions',
-        'analysis_step_version.software_versions.software',
+        # 'bioquality_metrics',
+        # 'analysis_step_version.analysis_step',
+        # 'analysis_step_version.analysis_step.pipelines',
+        # 'analysis_step_version.software_versions',
+        # 'analysis_step_version.software_versions.software',
 
     ]
     audit_inherit = [
-        'analysis_step_version.analysis_step',
-        'analysis_step_version.analysis_step.pipelines',
-        'analysis_step_version.analysis_step.versions',
-        'analysis_step_version.software_versions',
-        'analysis_step_version.software_versions.software'
+        # 'analysis_step_version.analysis_step',
+        # 'analysis_step_version.analysis_step.pipelines',
+        # 'analysis_step_version.analysis_step.versions',
+        # 'analysis_step_version.software_versions',
+        # 'analysis_step_version.software_versions.software'
     ]
     set_status_up = [
-        'bioquality_metrics',
+        # 'bioquality_metrics',
         'platform',
         
 
@@ -140,34 +140,34 @@ class Biofile(Item):
         if read_length is not None or mapped_read_length is not None:
             return "nt"
 
-    @calculated_property(schema={
-        "title": "QC Metric",
-        "description": "The list of QC metric objects associated with this file.",
-        "comment": "Do not submit. Values in the list are reverse links of a quality metric with this file in quality_metric_of field.",
-        "type": "array",
-        "items": {
-            "type": ['string', 'object'],
-            "linkFrom": "BioqualityMetric.bioquality_metric_of",
-        },
-        "notSubmittable": True,
-    })
-    def bioquality_metrics(self, request, bioquality_metrics):
-        return paths_filtered_by_status(request, bioquality_metrics)
+    # @calculated_property(schema={
+    #     "title": "QC Metric",
+    #     "description": "The list of QC metric objects associated with this file.",
+    #     "comment": "Do not submit. Values in the list are reverse links of a quality metric with this file in quality_metric_of field.",
+    #     "type": "array",
+    #     "items": {
+    #         "type": ['string', 'object'],
+    #         "linkFrom": "BioqualityMetric.bioquality_metric_of",
+    #     },
+    #     "notSubmittable": True,
+    # })
+    # def bioquality_metrics(self, request, bioquality_metrics):
+    #     return paths_filtered_by_status(request, bioquality_metrics)
 
-    @calculated_property(schema={
-        "title": "Analysis step version",
-        "description": "The step version of the pipeline from which this file is an output.",
-        "comment": "Do not submit.  This field is calculated from step_run.",
-        "type": "string",
-        "linkTo": "AnalysisStepVersion"
-    })
-    def analysis_step_version(self, request, root, step_run=None):
-        if step_run is None:
-            return
-        step_run_obj = traverse(root, step_run)['context']
-        step_version_uuid = step_run_obj.__json__(request).get('analysis_step_version')
-        if step_version_uuid is not None:
-            return request.resource_path(root[step_version_uuid])
+    # @calculated_property(schema={
+    #     "title": "Analysis step version",
+    #     "description": "The step version of the pipeline from which this file is an output.",
+    #     "comment": "Do not submit.  This field is calculated from step_run.",
+    #     "type": "string",
+    #     "linkTo": "AnalysisStepVersion"
+    # })
+    # def analysis_step_version(self, request, root, step_run=None):
+    #     if step_run is None:
+    #         return
+    #     step_run_obj = traverse(root, step_run)['context']
+    #     step_version_uuid = step_run_obj.__json__(request).get('analysis_step_version')
+    #     if step_version_uuid is not None:
+    #         return request.resource_path(root[step_version_uuid])
 
     @calculated_property(schema={
         "title": "Biological replicates",
@@ -180,9 +180,9 @@ class Biofile(Item):
             "type": "integer",
         }
     })
-    def biological_replicates(self, request, registry, root, replicate=None):
-        if replicate is not None:
-            replicate_obj = traverse(root, replicate)['context']
+    def biological_replicates(self, request, registry, root, bioreplicate=None):
+        if bioreplicate is not None:
+            replicate_obj = traverse(root, bioreplicate)['context']
             replicate_biorep = replicate_obj.__json__(request)['biological_replicate_number']
             return [replicate_biorep]
 
