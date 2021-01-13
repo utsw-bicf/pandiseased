@@ -432,11 +432,46 @@ const Summary = (props) => {
                 <PanelBody>
                     <div className="search-results">
                         <div className="search-results__facets">
-                            <FacetList context={context} facets={context.facets} filters={context.filters} searchBase={context.searchBase} />
+                            <FacetList context={context} facets={context.facets} filters={context.filters} searchBase={context.searchBase} docTypeTitleSuffix="summary" />
                         </div>
                         <div className="search-results__report-list">
                             <h4>Showing results</h4>
                             <div className="results-table-control">
+                                <dl className="key-value">
+                                    <div data-test="clear_filters">
+                                        <dt>clear_filters</dt>
+                                        <dd>{context.clear_filters}</dd>
+                                    </div>
+                                    <div data-test="search_base">
+                                        <dt>search_base</dt>
+                                        <dd>{context.search_base}</dd>
+                                    </div>
+                                    <div data-test="total">
+                                        <dt>total</dt>
+                                        <dd>{context.total}</dd>
+                                    </div>
+                                    <div data-test="filters.length">
+                                        <dt>filters.length</dt>
+                                        <dd>{context.filters.length}</dd>
+                                    </div>
+                                    <div data-test="matrix.x.group_by">
+                                        <dt>matrix.x.group_by</dt>
+                                        <dd>{context.matrix.x.group_by}</dd>
+                                    </div>
+                                    <div data-test="matrix.x.doc_count">
+                                        <dt>matrix.x.doc_count</dt>
+                                        <dd>{context.matrix.x.doc_count}</dd>
+                                    </div>
+                                    <div data-test="matrix.y.group_by">
+                                        <dt>matrix.y.group_by</dt>
+                                        <dd>{context.matrix.y.group_by}</dd>
+                                    </div>
+                                    <div data-test="matrix.y.doc_count">
+                                        <dt>matrix.y.doc_count</dt>
+                                        <dd>{context.matrix.y.doc_count}</dd>
+                                    </div>
+                                </dl>
+                                                        
                                 <div className="results-table-control__main">
                                     <ViewControls results={context} />
                                 </div>
@@ -458,3 +493,4 @@ Summary.propTypes = {
 };
 
 globals.contentViews.register(Summary, 'Summary');
+
