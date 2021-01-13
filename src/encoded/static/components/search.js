@@ -524,11 +524,6 @@ const BioexperimentComponent = (props, reactContext) => {
                     <Status item={result.status} badgeSize="small" css="result-table__status" />
                     {props.auditIndicators(result.audit, result['@id'], { session: reactContext.session, search: true })}
                 </div>
-                {cartControls ?
-                    <div className="result-item__cart-control">
-                        <CartToggle element={result} />
-                    </div>
-                : null}
                 <PickerActions {...props} />
             </div>
             { props.auditDetail(result.audit, result['@id'], { session: reactContext.session, except: result['@id'], forcedEditLink: true }) }
@@ -561,7 +556,6 @@ const BiodatasetComponent = (props, reactContext) => {
 
     // Determine whether the dataset is a series or not
     const seriesDataset = result['@type'].indexOf('Bioseries') >= 0;
-console.log("seriesDataset", seriesDataset);
     // Get the biosample info for Series types if any. Can be string or array. If array, only use iff 1 term name exists
     if (seriesDataset) {
         biosampleTerm = (result.assay_term_name) ? result.assay_term_name : '';
@@ -572,7 +566,6 @@ console.log("seriesDataset", seriesDataset);
 
     const haveSeries = result['@type'].indexOf('Bioseries') >= 0;
     const haveFileSet = result['@type'].indexOf('BiofileSet') >= 0;
-    console.log("haveSeries", result['@type'].indexOf('Bioseries'));
 
     return (
         <li className={resultItemClass(result)}>
@@ -931,7 +924,6 @@ export const SearchControls = ({ context, visualizeDisabledTitle, showResultsTog
     const searchBase = url.parse(reactContext.location_href).search || '';
     let trimmedSearchBase = ''
     if (searchBase.indexOf("&limit=") !== -1 || searchBase.indexOf("?limit=") !== -1 ) {
-        console.log("has limit")
         if (searchBase.indexOf("limit=all") !== -1) {
             trimmedSearchBase =searchBase.replace(/[?|&]limit=all/, '')
         } else {

@@ -374,9 +374,6 @@ class Bioexperiment extends React.Component {
                 <header className="row">
                   <div className="col-sm-12">
                     <Breadcrumbs root="/search/?type=Bioexperiment" crumbs={crumbs} crumbsReleased={crumbsReleased} />
-                    <div className="cart__toggle--header">
-                        <CartToggle element={context} />
-                    </div>
                     <h2>Experiment summary for {context.accession}</h2>
                     <ReplacementAccessions context={context} />
                     <ItemAccessories item={context}/>
