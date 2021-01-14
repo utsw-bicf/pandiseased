@@ -56,7 +56,8 @@ require('./biospecimen');
 require('./biofile');
 require('./biodataset');
 require('./doc');
-//require('./filegallery');
+require('./filegallery1');
+require('./filegallery');
 require('./bioexperiment');
 
 

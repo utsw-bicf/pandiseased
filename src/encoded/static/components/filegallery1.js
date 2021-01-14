@@ -38,10 +38,11 @@ function fileAccessionSort(a, b) {
 }
 
 // Calculate a string representation of the given replication_type.
+// let replicationType =this.context.replication_type;
 const replicationDisplay = replicationType => (
     `${replicationType === 'anisogenic' ? 'Anisogenic' : 'Isogenic'} replicate`
 );
-
+// console.log("replicationType",replicationType);
 export class FileTable extends React.Component {
     static rowClasses() {
         return '';
@@ -129,7 +130,8 @@ export class FileTable extends React.Component {
         // Establish the selected assembly and annotation for the tabs
         const selectedAssembly = null;
         const selectedAnnotation = null;
-
+// console.log("Context",this.context);
+// console.log("item",item);
         let datasetFiles = _((items && items.length > 0) ? items : []).uniq(file => file['@id']);
         if (datasetFiles.length > 0) {
             const unfilteredCount = datasetFiles.length;
@@ -514,7 +516,7 @@ class RawSequencingTable extends React.Component {
     render() {
         const { files, indexFiles, meta, showReplicateNumber } = this.props;
         const { loggedIn, adminUser, isAuthorized } = meta;
-
+// console.log("files",files);
         if (files && files.length > 0) {
             // Make object keyed by all files' @ids to make searching easy. Each key's value
             // points to the corresponding file object.
@@ -617,7 +619,7 @@ class RawSequencingTable extends React.Component {
             if (pairedFiles.length > 0) {
                 pairedRepGroups = _(pairedFiles).groupBy((file) => {
                     if (file.biological_replicates && file.biological_replicates.length === 1) {
-                        return globals.zeroFill(file.biological_replicates[0]) + ((file.replicate && file.replicate.library) ? file.replicate.library.accession : '');
+                        return globals.zeroFill(file.biological_replicates[0]) + ((file.bioreplicate && file.bioreplicate.biolibrary) ? file.bioreplicate.biolibrary.accession : '');
                     }
                     return 'Z';
                 });
@@ -735,7 +737,7 @@ class RawSequencingTable extends React.Component {
                                             <td rowSpan={rawHasIndex ? 2 : null} className={`table-raw-biorep${nextRawIsIndex ? ' pair-bottom merge-right + table-raw-merged' : ''}`}>{file.biological_replicates && file.biological_replicates.length > 0 ? file.biological_replicates.sort((a, b) => a - b).join(', ') : 'N/A'}</td>
                                         : null}
                                         {showReplicateNumber && !rawIsIndex ?
-                                            <td rowSpan={rawHasIndex ? 2 : null} className={nextRawIsIndex ? 'pair-bottom merge-right + table-raw-merged' : null}>{(file.replicate && file.replicate.library) ? file.replicate.library.accession : 'N/A'}</td>
+                                            <td rowSpan={rawHasIndex ? 2 : null} className={nextRawIsIndex ? 'pair-bottom merge-right + table-raw-merged' : null}>{(file.bioreplicate && file.bioreplicate.biolibrary) ? file.bioreplicate.biolibrary.accession : 'N/A'}</td>
                                         : null}
                                         <td className={singleClass}>
                                             <DownloadableAccession file={file} buttonEnabled={buttonEnabled} clickHandler={meta.fileClick ? meta.fileClick : null} loggedIn={loggedIn} adminUser={adminUser} />
@@ -804,7 +806,8 @@ class RawFileTable extends React.Component {
     render() {
         const { files, meta, showReplicateNumber } = this.props;
         const { loggedIn, adminUser, isAuthorized } = meta;
-
+        
+// console.log("rawfiles",files);
         if (files && files.length > 0) {
             // Group all files by their library accessions. Any files without replicates or
             // libraries get grouped under library 'Z' so they get sorted at the end.
@@ -812,7 +815,7 @@ class RawFileTable extends React.Component {
                 // Groups have a 4-digit zero-filled biological replicate number concatenated with
                 // the library accession, e.g. 0002ENCLB158ZZZ.
                 const bioRep = file.biological_replicates ? globals.zeroFill(file.biological_replicates[0], 4) : '';
-                return bioRep + (file.replicate && file.replicate.library && file.replicate.library.accession ? file.replicate.library.accession : 'Z');
+                return bioRep + (file.bioreplicate && file.bioreplicate.biolibrary && file.bioreplicate.biolibrary.accession ? file.bioreplicate.biolibrary.accession : 'Z');
             });
 
             // Split library/file groups into paired and non-paired library/file groups.
@@ -885,7 +888,7 @@ class RawFileTable extends React.Component {
                                             : null}
                                             {i === 0 ?
                                                 <td rowSpan={groupFiles.length} className={`${groupBottom} merge-right table-raw-merged`}>
-                                                    {groupFiles[0].replicate && groupFiles[0].replicate.library ? <span>{groupFiles[0].replicate.library.accession}</span> : <i>N/A</i>}
+                                                    {groupFiles[0].bioreplicate && groupFiles[0].bioreplicate.biolibrary ? <span>{groupFiles[0].bioreplicate.biolibrary.accession}</span> : <i>N/A</i>}
                                                 </td>
                                             : null}
                                             <td className={fileBottom}>
@@ -917,7 +920,7 @@ class RawFileTable extends React.Component {
                                         {showReplicateNumber ?
                                             <td className="table-raw-biorep">{(file.biological_replicates && file.biological_replicates.length > 0) ? file.biological_replicates.sort((a, b) => a - b).join(', ') : 'N/A'}</td> :
                                         null}
-                                        <td>{(file.replicate && file.replicate.library) ? file.replicate.library.accession : 'N/A'}</td>
+                                        <td>{(file.bioreplicate && file.bioreplicate.biolibrary) ? file.bioreplicate.biolibrary.accession : 'N/A'}</td>
                                         <td>
                                             <DownloadableAccession file={file} buttonEnabled={buttonEnabled} clickHandler={meta.fileClick ? meta.fileClick : null} loggedIn={loggedIn} adminUser={adminUser} />
                                         </td>
@@ -2863,9 +2866,9 @@ class FileGalleryRendererComponent extends React.Component {
 
         // Prepare to display the file information modal.
         const modalTypeMap = {
-            File: 'file',
-            Step: 'analysis-step',
-            QualityMetric: 'quality-metric',
+        File: 'file',
+            // Step: 'analysis-step',
+            // QualityMetric: 'quality-metric',
         };
         const modalClass = meta ? `graph-modal--${modalTypeMap[meta.type]}` : '';
         const browsers = this.getAvailableBrowsers();
@@ -3249,10 +3252,10 @@ const FileDetailView = function FileDetailView(node, qcClick, auditIndicators, a
                         </div>
                     : null}
 
-                    {selectedFile.replicate && selectedFile.replicate.library ?
+                    {selectedFile.bioreplicate && selectedFile.bioreplicate.biolibrary ?
                         <div data-test="library">
                             <dt>Library</dt>
-                            <dd>{selectedFile.replicate.library.accession}</dd>
+                            <dd>{selectedFile.bioreplicate.biolibrary.accession}</dd>
                         </div>
                     : null}
 
