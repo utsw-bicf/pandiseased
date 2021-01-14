@@ -144,12 +144,6 @@
         "accession": {
             "title": "Accession"
         },
-        "date": {
-            "title": "Surgery Procedure"
-        },
-        "hospital_location": {
-            "title": "Surgery Hospital Location"
-        },
         "surgery_procedure.procedure_type": {
             "title": "Surgery Procedure"
         },
@@ -174,12 +168,6 @@
         "pathology_report.m_stage": {
             "title": "pM Stage (at presentation)"
         },
-        "pathology_report.metasis_details.site": {
-            "title": "Metastatic Site (Pathology)"
-        },
-        "pathology_report.metasis_details.type": {
-            "title": "Metastasis Type (Pathology)"
-        },
         "pathology_report.ajcc_version": {
             "title": "AJCC Version"
         },
@@ -191,33 +179,6 @@
         },
         "pathology_report.focality": {
             "title": "Tumor Focality"
-        },
-        "pathology_report.sarcomatoid": {
-            "title": "Sarcomatoid Change"
-        },
-        "pathology_report.necrosis": {
-            "title": "Tumor Necrosis"
-        },
-        "pathology_report.margins": {
-            "title": "Margin Status"
-        },
-        "pathology_report.lvi": {
-            "title": "Lymphvascular invasion(LVI)"
-        },
-        "pathology_report.micro_perinephric": {
-            "title": "Perinephric Infiltration"
-        },
-        "pathology_report.micro_vein": {
-            "title": "Renal Vein Involvement"
-        },
-        "pathology_report.micro_adrenal": {
-            "title": "Ipsilateral Adrenal Gland Involvement"
-        },
-        "pathology_report.ihc.antibody": {
-            "title": "IHC/FISH (Clinical lab)"
-        },
-        "pathology_report.ihc.result": {
-            "title": "IHC/FISH results"
         },
         "status": {
             "title": "Status"

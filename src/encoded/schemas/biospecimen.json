@@ -463,20 +463,8 @@
         "activity_status": {
             "title": "Specimen Activity Status"
         },
-        "surgery.surgery_procedure.procedure_type": {
-            "title": "Surgery Procedure"
-        },
         "surgery.pathology_report.histology_filter": {
             "title": "Histologic Subtype"
-        },
-        "biolibrary.nucleic_acid_term_name": {
-            "title": "Library Material"
-        },
-        "biolibrary.biofile.file_format": {
-            "title": "File Format"
-        },
-        "biolibrary.biofile.output_type": {
-            "title": "File Output Type"
         },
         "surgery.pathology_report.t_stage": {
             "title": "pT Stage (at presentation)"
@@ -493,38 +481,14 @@
         "surgery.pathology_report.ajcc_tnm_stage": {
             "title": "TNM Stage (at presentation)"
         },
-        "blood_related_field.blood_component": {
-            "title": "Blood Component"
+        "biolibrary.nucleic_acid_term_name": {
+            "title": "Library Material"
         },
-        "tissue_related_field.type": {
-            "title": "Tissue Type"
+        "biolibrary.biofile.file_format": {
+            "title": "File Format"
         },
-        "tissue_related_field.tissue_other_specify": {
-            "title": "Specify Other Tissue"
-        },
-        "fluid_related_field.fluid_type": {
-            "title": "Type of fluid"
-        },
-        "preservation_method": {
-            "title": "Preservation method"
-        },
-        "mouse_related_info.ortho_vs_sc": {
-            "title": "Ortho VS S.C."
-        },
-        "mouse_related_info.part_of_drug_trial": {
-            "title": "Part of Drug Trial"
-        },
-        "mouse_related_info.mouse_treatments": {
-            "title": "Treatments"
-        },
-        "mouse_related_info.number_of_days_on_treatment": {
-            "title": "Number of Days on Treatment"
-        },
-        "pooled_from": {
-            "title": "Pooled from"
-        },
-        "part_of": {
-            "title": "Separated from"
+        "biolibrary.biofile.output_type": {
+            "title": "File Output Type"
         },
         "status": {
             "title": "Status"
@@ -539,6 +503,9 @@
         },
         "openspecimen_id": {
             "title": "OpenSpecimen ID"
+        },
+        "patient": {
+            "title": "Patient"
         },
         "sample_type": {
             "title": "Sample Type"
@@ -560,6 +527,9 @@
         },
         "activity_status": {
             "title": "Specimen Activity Status"
+        },
+        "surgery.pathology_report.histology_filter": {
+            "title": "Histologic Subtype"
         },
         "status": {
             "title": "Status"

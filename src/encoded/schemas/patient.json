@@ -274,15 +274,6 @@
         "accession": {
             "title": "Accession"
         },
-        "diagnosis.age": {
-            "title": "Diagnosis age"
-        },
-        "diagnosis.age_unit": {
-            "title": "Diagnosis age units"
-        },
-        "diagnosis.follow_up_duration_range": {
-            "title": "Follow Up Duration"
-        },
         "sex": {
             "title": "Sex"
         },
@@ -292,47 +283,44 @@
         "race": {
             "title": "Race"
         },
+        "diagnosis.age": {
+            "title": "Diagnosis age"
+        },
+        "diagnosis.age_unit": {
+            "title": "Diagnosis age units"
+        },
+        "diagnosis.follow_up_duration_range": {
+            "title": "Follow Up Duration"
+        },
         "dominant_tumor.histology": {
-            "title": "Dominant Tumor"
+            "title": "Dominant Tumor Histology"
         },
-        "surgery.nephr_robotic_assist":{
-            "title": "Nephrectomy Robotic Assist"
+        "dominant_tumor.t_stage": {
+            "title": "Dominant Tumor pT Stage"
         },
-        "surgery.pathology_report.pathology_report_tumor_range":{
-            "title": "Tumor Size Range"
+        "dominant_tumor.n_stage": {
+            "title": "Dominant Tumor pN Stage"
         },
-        "surgery.pathology_report.histology": {
-            "title": "Histologic Subtype"
+        "dominant_tumor.m_stage": {
+            "title": "Dominant Tumor pM Stage"
         },
-        "surgery.pathology_report.t_stage": {
-            "title": "pT Stage"
+        "dominant_tumor.tumor_size": {
+            "title": "Dominant Tumor Size"
         },
-        "surgery.pathology_report.n_stage": {
-            "title": "pN Stage"
+        "dominant_tumor.tumor_size_units": {
+            "title": "Dominant Tumor Size Unit"
         },
-        "surgery.pathology_report.m_stage": {
-            "title": "pM Stage"
+        "surgery_summary": {
+            "title": "Surgery Treatment Status"
         },
-        "surgery.pathology_report.metasis_details.site": {
-            "title": "Metastatic Site (Pathology)"
+        "medical_imaging_before_nephrectomy.type": {
+            "title": "Medical Imaging Before Nephrectomy"
         },
-        "surgery.pathology_report.metasis_details.type": {
-            "title": "Metastasis Type (Pathology)"
+        "radiation_summary": {
+            "title": "Radiation Treatment Status"
         },
-        "surgery.pathology_report.ajcc_version": {
-            "title": "AJCC Version (at presentation)"
-        },
-        "surgery.pathology_report.ajcc_tnm_stage": {
-            "title": "TNM Stage at Presentation"
-        },
-        "surgery.pathology_report.laterality": {
-            "title": "Tumor Laterality"
-        },
-        "ihc.antibody": {
-            "title": "IHC/FISH (Clinical lab)"
-        },
-        "ihc.result": {
-            "title": "IHC/FISH results"
+        "metastasis_status": {
+            "title": "Metastasis Status"
         },
         "status": {
             "title": "Status"
