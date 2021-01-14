@@ -385,6 +385,8 @@ class Bioexperiment extends React.Component {
                     </div>
                     <DisplayAsJson />
                 </header>
+            {/* {auditDetail(context.audit, 'experiment-audit', { session: reactContext.session, sessionProperties: reactContext.session_properties, except: context['@id'] })} */}
+
                 <Panel >
                     <PanelBody addClasses="panel__split">
                         <div className="panel__split-element">

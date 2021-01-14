@@ -88,6 +88,15 @@ class Biofile(Item):
     private_s3_statuses = ['in progress', 'replaced', 'deleted', 'revoked']
 
     @calculated_property(schema={
+        "title": "Title",
+        "description": "The title of the file either the accession or the external_accession.",
+        "comment": "Do not submit. This is a calculated property",
+        "type": "string",
+    })
+    def title(self, accession=None, external_accession=None):
+        return accession or external_accession
+    
+    @calculated_property(schema={
         "title": "Superseded by",
         "description": "The file(s) that supersede this file (i.e. are more preferable to use).",
         "comment": "Do not submit. Values in the list are reverse links of a file that supersedes.",
@@ -139,6 +148,17 @@ class Biofile(Item):
     def read_length_units(self, read_length=None, mapped_read_length=None):
         if read_length is not None or mapped_read_length is not None:
             return "nt"
+    @calculated_property(schema={
+        "title": "Download URL",
+        "description": "The download path for S3 to obtain the actual file.",
+        "comment": "Do not submit. This is issued by the server.",
+        "type": "string",
+    })
+    def href(self, request, file_format, accession=None, external_accession=None):
+        accession = accession or external_accession
+        file_extension = self.schema['file_format_file_extension'][file_format]
+        filename = '{}{}'.format(accession, file_extension)
+        return request.resource_path(self, '@@download', filename)
 
     # @calculated_property(schema={
     #     "title": "QC Metric",

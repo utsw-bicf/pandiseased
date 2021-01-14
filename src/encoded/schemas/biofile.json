@@ -599,7 +599,10 @@
                         "tsv",
                         "vcf",
                         "idx",
-                        "txt"
+                        "txt",
+                        "bigBed",
+                        "bigWig",
+                        "hic"
                     ]
                 }
             ]
@@ -780,7 +783,14 @@
                 "paired-ended"
             ]
         },
-   
+        "external_accession": {
+            "title": "External accession",
+            "description": "For files that were not accessioned at our site but have an accession elsewhere.",
+            "comment": "Do not submit. Only admins are allowed to set or update this value.",
+            "type": "string",
+            "permission": "import_items",
+            "uniqueKey": "accession"
+        },
         "status": {
             "title": "Status",
             "type": "string",
@@ -818,7 +828,6 @@
         "assembly": {
             "title": "Genome assembly"
         },
-    
         "biological_replicates": {
             "title": "Biological replicates"
         },
@@ -855,7 +864,6 @@
         "date_created": {
             "title": "Date created"
         },
-        
         "status": {
             "title": "Status"
         }
@@ -878,7 +886,23 @@
         "unfiltered alignments": "alignment",
         "variant calls": "annotation"
     },
- 
+    "file_format_file_extension": {
+        "bam": ".bam",
+        "csv": ".csv",
+        "bigBed": ".bigBed",
+        "bigWig": ".bigWig",
+        "hic": ".hic",
+        "fastq": ".fastq.gz",
+        "gff": ".gff.gz",
+        "gtf": ".gtf.gz",
+        "idat": ".idat",
+        "sam": ".sam.gz",
+        "tar": ".tar.gz",
+        "tsv": ".tsv",
+        "vcf": ".vcf.gz",
+        "idx": ".idx",
+        "txt": ".txt.gz"
+    },
     "boost_values": {
         "accession": 20.0,
         "@type": 1.0,

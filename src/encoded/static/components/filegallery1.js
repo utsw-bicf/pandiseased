@@ -2288,7 +2288,8 @@ class FileGalleryRendererComponent extends React.Component {
         const loggedIn = !!(context.session && context.session['auth.userid']);
         const adminUser = loggedIn && !!(context.session_properties && context.session_properties.admin);
         const datasetFiles = props.data ? props.data['@graph'] : [];
-
+ console.log("data", props.data);
+ console.log("data graph",props.data['@graph']);
         this.experimentType = props.context['@type'][0];
 
         // Initialize React state variables.
