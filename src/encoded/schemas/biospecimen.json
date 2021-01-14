@@ -528,7 +528,7 @@
         "activity_status": {
             "title": "Specimen Activity Status"
         },
-        "surgery.pathology_report.histology_filter": {
+        "surgery.pathology_report.histology": {
             "title": "Histologic Subtype"
         },
         "status": {
