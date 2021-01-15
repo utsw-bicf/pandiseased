@@ -295,21 +295,6 @@
         "dominant_tumor.histology": {
             "title": "Dominant Tumor Histology"
         },
-        "dominant_tumor.t_stage": {
-            "title": "Dominant Tumor pT Stage"
-        },
-        "dominant_tumor.n_stage": {
-            "title": "Dominant Tumor pN Stage"
-        },
-        "dominant_tumor.m_stage": {
-            "title": "Dominant Tumor pM Stage"
-        },
-        "dominant_tumor.tumor_size": {
-            "title": "Dominant Tumor Size"
-        },
-        "dominant_tumor.tumor_size_units": {
-            "title": "Dominant Tumor Size Unit"
-        },
         "surgery_summary": {
             "title": "Surgery Treatment Status"
         },
@@ -347,4 +332,5 @@
         },
     "changelog": "/profiles/changelogs/patient.md"
 }
+
 
