@@ -627,7 +627,7 @@
             "comment": "Do not submit. This value can only be set by admins.",
             "type": "boolean"
         },
-        "submitted_file_name": {
+        "submitted_file_name": {  
             "title": "Original file name",
             "description": "The local file name used at time of submission.",
             "comment": "Although this is not required. It is highly recommended.",

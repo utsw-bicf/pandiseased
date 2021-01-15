@@ -1795,7 +1795,7 @@ const FileGraph = (props) => {
     const { files, highlightedFiles, biodataset, infoNode, selectedAssembly, selectedAnnotation, colorize, handleNodeClick, schemas, loggedIn } = props;
 
     // Build node graph of the files and analysis steps with this experiment
-    let graph;
+    // let graph;
     if (files.length > 0) {
         try {
             graph = assembleGraph(
@@ -2873,7 +2873,8 @@ class FileGalleryRendererComponent extends React.Component {
         };
         const modalClass = meta ? `graph-modal--${modalTypeMap[meta.type]}` : '';
         const browsers = this.getAvailableBrowsers();
-        const tabs = { browser: 'Genome browser', graph: 'Association graph', tables: 'File details' };
+        // const tabs = { browser: 'Genome browser', graph: 'Association graph', tables: 'File details' };
+        const tabs = { tables: 'File details' };
 
         return (
             <Panel>
@@ -2904,15 +2905,15 @@ class FileGalleryRendererComponent extends React.Component {
                             selectedTab={this.state.currentTab}
                             handleTabClick={this.handleTabClick}
                         >
-                            <TabPanelPane key="browser">
+                            {/* <TabPanelPane key="browser">
                                 <GenomeBrowser
                                     files={includedFiles}
                                     label={'file gallery'}
                                     expanded={this.state.facetsOpen}
                                     assembly={this.state.selectedAssembly}
                                 />
-                            </TabPanelPane>
-                            <TabPanelPane key="graph">
+                            </TabPanelPane> */}
+                            {/* <TabPanelPane key="graph">
                                 <FileGraph
                                     biodataset={context}
                                     files={graphIncludedFiles}
@@ -2927,7 +2928,7 @@ class FileGalleryRendererComponent extends React.Component {
                                     auditIndicators={this.props.auditIndicators}
                                     auditDetail={this.props.auditDetail}
                                 />
-                            </TabPanelPane>
+                            </TabPanelPane> */}
                             <TabPanelPane key="tables">
                                 <FilterControls
                                     selectedFilterValue={this.state.selectedFilterValue}
@@ -2940,6 +2941,8 @@ class FileGalleryRendererComponent extends React.Component {
                                     handleInclusionChange={this.handleInclusionChange}
                                     browserChangeHandler={this.handleBrowserChange}
                                     visualizeHandler={this.handleVisualize}
+                                    expanded={this.state.facetsOpen}
+
                                 />
                                 {/* If logged in and dataset is released, need to combine search of files that reference
                                     this dataset to get released and unreleased ones. If not logged in, then just get
