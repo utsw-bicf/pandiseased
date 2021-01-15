@@ -74,13 +74,13 @@ export class FileTable extends React.Component {
         this.hoverDL = this.hoverDL.bind(this);
     }
 
-    fileClick(file) {
+    fileClick(biofile) {
         const { setInfoNodeId, setInfoNodeVisible } = this.props;
         if (setInfoNodeId && setInfoNodeVisible) {
             const node = {
-                '@type': ['File'],
+                '@type': ['Biofile'],
                 metadata: {
-                    ref: file,
+                    ref: biofile,
                 },
                 schemas: this.props.schemas,
             };
@@ -132,36 +132,36 @@ export class FileTable extends React.Component {
         const selectedAnnotation = null;
 // console.log("Context",this.context);
 // console.log("item",item);
-        let datasetFiles = _((items && items.length > 0) ? items : []).uniq(file => file['@id']);
-        if (datasetFiles.length > 0) {
-            const unfilteredCount = datasetFiles.length;
+        let biodatasetFiles = _((items && items.length > 0) ? items : []).uniq(biofile => biofile['@id']);
+        if (biodatasetFiles.length > 0) {
+            const unfilteredCount = biodatasetFiles.length;
 
             // Filter all the files according to the given filters, and remove duplicates
-            datasetFiles = _(datasetFiles).filter((file) => {
-                if (file.output_category !== 'raw data') {
+            biodatasetFiles = _(biodatasetFiles).filter((biofile) => {
+                if (biofile.output_category !== 'raw data') {
                     if (selectedAssembly) {
                         if (selectedAnnotation) {
-                            return selectedAnnotation === file.genome_annotation && selectedAssembly === file.assembly;
+                            return selectedAnnotation === biofile.genome_annotation && selectedAssembly === biofile.assembly;
                         }
-                        return !file.genome_annotation && selectedAssembly === file.assembly;
+                        return !biofile.genome_annotation && selectedAssembly === biofile.assembly;
                     }
                 }
                 return true;
             });
-            const filteredCount = datasetFiles.length;
+            const filteredCount = biodatasetFiles.length;
 
             // Extract four kinds of file arrays
-            const files = _(datasetFiles).groupBy((file) => {
-                if (file.output_category === 'raw data') {
-                    if (file.output_type === 'reads') {
+            const files = _(biodatasetFiles).groupBy((biofile) => {
+                if (biofile.output_category === 'raw data') {
+                    if (biofile.output_type === 'reads') {
                         return 'raw';
                     }
-                    if (file.output_type === 'index reads') {
+                    if (biofile.output_type === 'index reads') {
                         return 'index';
                     }
                     return 'rawArray';
                 }
-                if (file.output_category === 'reference') {
+                if (biofile.output_category === 'reference') {
                     return 'ref';
                 }
                 return 'proc';
@@ -332,7 +332,7 @@ FileTable.procTableColumns = {
     visualize: {
         title: 'Visualize',
         display: (item, meta) => {
-            const selectedFile = meta.browserOptions.selectedBrowserFiles.find(file => file['@id'] === item['@id']);
+            const selectedFile = meta.browserOptions.selectedBrowserFiles.find(biofile => biofile['@id'] === item['@id']);
             const selectable = visFileSelectable(item, meta.browserOptions.selectedBrowserFiles, meta.browserOptions.currentBrowser);
             return (
                 <div className="file-table-visualizer">
@@ -359,7 +359,7 @@ FileTable.procTableColumns = {
     },
     mapped_read_length: {
         title: 'Mapped read length',
-        hide: list => _(list).all(file => file.mapped_read_length === undefined),
+        hide: list => _(list).all(biofile => biofile.mapped_read_length === undefined),
     },
     assembly: { title: 'Mapping assembly' },
     genome_annotation: {
@@ -410,7 +410,7 @@ FileTable.refTableColumns = {
     output_type: { title: 'Output type' },
     mapped_read_length: {
         title: 'Mapped read length',
-        hide: list => _(list).all(file => file.mapped_read_length === undefined),
+        hide: list => _(list).all(biofile => biofile.mapped_read_length === undefined),
     },
     assembly: { title: 'Mapping assembly' },
     genome_annotation: {
@@ -504,8 +504,8 @@ class RawSequencingTable extends React.Component {
      *
      * @return {object} Index reads file with index_of matching given files; undefined if none
      */
-    findIndexFile(file0, file1) {
-        return this.props.indexFiles.find(indexFile => indexFile.index_of[0] === file0['@id'] && (indexFile.index_of.length === 2 ? indexFile.index_of[1] === file1['@id'] : true));
+    findIndexFile(biofile0, biofile1) {
+        return this.props.indexFiles.find(indexFile => indexFile.index_of[0] === biofile0['@id'] && (indexFile.index_of.length === 2 ? indexFile.index_of[1] === biofile1['@id'] : true));
     }
 
     handleCollapse() {
@@ -521,35 +521,35 @@ class RawSequencingTable extends React.Component {
             // Make object keyed by all files' @ids to make searching easy. Each key's value
             // points to the corresponding file object.
             const filesKeyed = {};
-            files.forEach((file) => {
-                filesKeyed[file['@id']] = file;
+            files.forEach((biofile) => {
+                filesKeyed[biofile['@id']] = biofile;
             });
 
             // Make lists of files that are and aren't paired. Paired files with missing partners
             // count as not paired. Files with more than one biological replicate don't count as
             // paired.
             let nonpairedFiles = [];
-            let pairedFiles = _(files).filter((file) => {
-                if (file.pairSortKey) {
+            let pairedFiles = _(files).filter((biofile) => {
+                if (biofile.pairSortKey) {
                     // If we already know this file is part of a good pair from before, just let it
                     // pass the filter
                     return true;
                 }
 
                 // See if the file qualifies as a pair element
-                if (file.paired_with) {
+                if (biofile.paired_with) {
                     // File is paired; make sure its partner exists and points back at `file`.
-                    const partner = filesKeyed[file.paired_with];
-                    if (partner && partner.paired_with === file['@id']) {
+                    const partner = filesKeyed[biofile.paired_with];
+                    if (partner && partner.paired_with === biofile['@id']) {
                         // The file and its partner properly paired with each other. Now see if
                         // their biological replicates and libraries allow them to pair up in the
                         // file table. Either they must share the same single biological replicate
                         // or they must share the fact that neither have a biological replicate
                         // which can be true for csqual and csfasta files.
-                        if ((file.biological_replicates && file.biological_replicates.length === 1 &&
+                        if ((biofile.biological_replicates && biofile.biological_replicates.length === 1 &&
                                 partner.biological_replicates && partner.biological_replicates.length === 1 &&
-                                file.biological_replicates[0] === partner.biological_replicates[0]) ||
-                                ((!file.biological_replicates || file.biological_replicates.length === 0) &&
+                                biofile.biological_replicates[0] === partner.biological_replicates[0]) ||
+                                ((!biofile.biological_replicates || biofile.biological_replicates.length === 0) &&
                                 (!partner.biological_replicates || partner.biological_replicates.length === 0))) {
                             // Both the file and its partner qualify as good pairs of each other.
                             // Let them pass the filter, and set their sort keys to the lower of
@@ -558,10 +558,10 @@ class RawSequencingTable extends React.Component {
                             // concatenated so they sort as pairs correctly. Also track the
                             // `pairSortId` which is the same as portSortKey` but without the
                             // paired_end property concatenated.
-                            partner.pairSortId = file.title < partner.title ? file.title : partner.title;
+                            partner.pairSortId = biofile.title < partner.title ? biofile.title : partner.title;
                             partner.pairSortKey = `${partner.pairSortId}-${partner.paired_end}`;
-                            file.pairSortId = partner.pairSortId;
-                            file.pairSortKey = `${partner.pairSortId}-${file.paired_end}`;
+                            biofile.pairSortId = partner.pairSortId;
+                            biofile.pairSortKey = `${partner.pairSortId}-${biofile.paired_end}`;
                             return true;
                         }
                     }
@@ -569,7 +569,7 @@ class RawSequencingTable extends React.Component {
 
                 // File not part of a pair; add it to the non-paired list as a copy so we can
                 // mutate them later.
-                nonpairedFiles.push(Object.assign({}, file));
+                nonpairedFiles.push(Object.assign({}, biofile));
                 return false;
             });
 
@@ -617,9 +617,9 @@ class RawSequencingTable extends React.Component {
             let pairedRepGroups = {};
             let pairedRepKeys = [];
             if (pairedFiles.length > 0) {
-                pairedRepGroups = _(pairedFiles).groupBy((file) => {
-                    if (file.biological_replicates && file.biological_replicates.length === 1) {
-                        return globals.zeroFill(file.biological_replicates[0]) + ((file.bioreplicate && file.bioreplicate.biolibrary) ? file.bioreplicate.biolibrary.accession : '');
+                pairedRepGroups = _(pairedFiles).groupBy((biofile) => {
+                    if (biofile.biological_replicates && biofile.biological_replicates.length === 1) {
+                        return globals.zeroFill(biofile.biological_replicates[0]) + ((biofile.bioreplicate && biofile.bioreplicate.biolibrary) ? biofile.bioreplicate.biolibrary.accession : '');
                     }
                     return 'Z';
                 });
@@ -667,10 +667,10 @@ class RawSequencingTable extends React.Component {
 
                                 // Render each file's row, with the biological replicate and library
                                 // cells only on the first row.
-                                return groupFiles.map((file, i) => {
+                                return groupFiles.map((biofile, i) => {
                                     let pairClass;
-                                    if (file.run_type === 'paired-ended') {
-                                        pairClass = file.paired_end === '1' ? 'align-pair1' : 'align-pair2';
+                                    if (biofile.run_type === 'paired-ended') {
+                                        pairClass = biofile.paired_end === '1' ? 'align-pair1' : 'align-pair2';
                                     } else {
                                         // Must be an index reads file if it's not paired-ended.
                                         pairClass = 'index-reads';
@@ -681,37 +681,37 @@ class RawSequencingTable extends React.Component {
                                     // table.
                                     const isNextInGroupIndexReads = groupFiles[i + 1] && groupFiles[i + 1].output_type === 'index reads';
                                     if (
-                                        (file.output_type === 'index reads' || (file.paired_end === '2' && !isNextInGroupIndexReads))
+                                        (biofile.output_type === 'index reads' || (biofile.paired_end === '2' && !isNextInGroupIndexReads))
                                         && !(i === groupFiles.length - 1 && j === pairedRepKeys.length - 1 && nonpairedFiles.length === 0)
                                     ) {
                                         pairClass = `${pairClass} pair-bottom`;
                                     }
 
                                     return (
-                                        <tr key={file['@id']}>
+                                        <tr key={biofile['@id']}>
                                             {showReplicateNumber && i === 0 ?
-                                                <td rowSpan={groupFiles.length} className={`${bottomClass} merge-right table-raw-merged table-raw-biorep`}>{groupFiles[0].biological_replicates[0]}</td>
+                                                <td rowSpan={groupFiles.length} className={`$cloud_metadata{bottomClass} merge-right table-raw-merged table-raw-biorep`}>{groupFiles[0].biological_replicates[0]}</td>
                                             : null}
                                             {i === 0 ?
-                                                <td rowSpan={groupFiles.length} className={`${bottomClass} merge-right + table-raw-merged`}>{(groupFiles[0].replicate && groupFiles[0].replicate.library) ? groupFiles[0].replicate.library.accession : null}</td>
+                                                <td rowSpan={groupFiles.length} className={`${bottomClass} merge-right + table-raw-merged`}>{(groupFiles[0].bioreplicate && groupFiles[0].bioreplicate.biolibrary) ? groupFiles[0].bioreplicate.biolibrary.accession : null}</td>
                                             : null}
                                             <td className={pairClass}>
-                                                <DownloadableAccession file={file} clickHandler={meta.fileClick ? meta.fileClick : null} loggedIn={loggedIn} adminUser={adminUser} />
+                                                <DownloadableAccession file={biofile} clickHandler={meta.fileClick ? meta.fileClick : null} loggedIn={loggedIn} adminUser={adminUser} />
                                             </td>
-                                            <td className={pairClass}>{file.file_type}</td>
-                                            <td className={pairClass}>{file.run_type === 'paired-ended' ? 'PE' : ''}{file.read_length ? <span>{file.read_length + file.read_length_units}</span> : null}</td>
-                                            <td className={pairClass}>{file.paired_end}</td>
-                                            <td className={pairClass}>{file.output_type}</td>
-                                            <td className={pairClass}>{file.lab && file.lab.title ? file.lab.title : null}</td>
-                                            <td className={pairClass}>{dayjs.utc(file.date_created).format('YYYY-MM-DD')}</td>
-                                            <td className={pairClass}>{globals.humanFileSize(file.file_size)}</td>
-                                            <td className={pairClass}><ObjectAuditIcon object={file} isAuthorized={isAuthorized} /></td>
-                                            <td className={pairClass}><Status item={file} badgeSize="small" css="status__table-cell" /></td>
+                                            <td className={pairClass}>{biofile.file_type}</td>
+                                            <td className={pairClass}>{biofile.run_type === 'paired-ended' ? 'PE' : ''}{biofile.read_length ? <span>{biofile.read_length + biofile.read_length_units}</span> : null}</td>
+                                            <td className={pairClass}>{biofile.paired_end}</td>
+                                            <td className={pairClass}>{biofile.output_type}</td>
+                                            <td className={pairClass}>{biofile.lab && biofile.lab.title ? biofile.lab.title : null}</td>
+                                            <td className={pairClass}>{dayjs.utc(biofile.date_created).format('YYYY-MM-DD')}</td>
+                                            <td className={pairClass}>{globals.humanFileSize(biofile.file_size)}</td>
+                                            <td className={pairClass}><ObjectAuditIcon object={biofile} isAuthorized={isAuthorized} /></td>
+                                            <td className={pairClass}><Status item={biofile} badgeSize="small" css="status__table-cell" /></td>
                                         </tr>
                                     );
                                 });
                             })}
-                            {nonpairedFiles.map((file, i) => {
+                            {nonpairedFiles.map((biofile, i) => {
                                 // Draw a row over the first single-ended file if a paired file
                                 // preceded it.
                                 const rowClasses = [
@@ -721,36 +721,36 @@ class RawSequencingTable extends React.Component {
                                 // Work out CSS classes and row spans for raw sequencing files with
                                 // a corresponding index reads file.
                                 let singleClass = null;
-                                const rawHasIndex = file.output_type !== 'index reads' && nonpairedFiles[i + 1] && nonpairedFiles[i + 1].output_type === 'index reads';
-                                const rawIsIndex = file.output_type === 'index reads';
+                                const rawHasIndex = biofile.output_type !== 'index reads' && nonpairedFiles[i + 1] && nonpairedFiles[i + 1].output_type === 'index reads';
+                                const rawIsIndex = biofile.output_type === 'index reads';
                                 const nextRawIsIndex = nonpairedFiles[i + 1] && nonpairedFiles[i + 1].output_type === 'index reads';
                                 if (rawIsIndex) {
                                     singleClass = 'index-reads pair-bottom';
                                 }
 
                                 // Determine if accession should be a button or not.
-                                const buttonEnabled = !!(meta.graphedFiles && meta.graphedFiles[file['@id']]);
+                                const buttonEnabled = !!(meta.graphedFiles && meta.graphedFiles[biofile['@id']]);
 
                                 return (
-                                    <tr key={file['@id']} className={rowClasses.join(' ')}>
+                                    <tr key={biofile['@id']} className={rowClasses.join(' ')}>
                                         {showReplicateNumber && !rawIsIndex ?
-                                            <td rowSpan={rawHasIndex ? 2 : null} className={`table-raw-biorep${nextRawIsIndex ? ' pair-bottom merge-right + table-raw-merged' : ''}`}>{file.biological_replicates && file.biological_replicates.length > 0 ? file.biological_replicates.sort((a, b) => a - b).join(', ') : 'N/A'}</td>
+                                            <td rowSpan={rawHasIndex ? 2 : null} className={`table-raw-biorep${nextRawIsIndex ? ' pair-bottom merge-right + table-raw-merged' : ''}`}>{biofile.biological_replicates && biofile.biological_replicates.length > 0 ? biofile.biological_replicates.sort((a, b) => a - b).join(', ') : 'N/A'}</td>
                                         : null}
                                         {showReplicateNumber && !rawIsIndex ?
-                                            <td rowSpan={rawHasIndex ? 2 : null} className={nextRawIsIndex ? 'pair-bottom merge-right + table-raw-merged' : null}>{(file.bioreplicate && file.bioreplicate.biolibrary) ? file.bioreplicate.biolibrary.accession : 'N/A'}</td>
+                                            <td rowSpan={rawHasIndex ? 2 : null} className={nextRawIsIndex ? 'pair-bottom merge-right + table-raw-merged' : null}>{(biofile.bioreplicate && biofile.bioreplicate.biolibrary) ? biofile.bioreplicate.biolibrary.accession : 'N/A'}</td>
                                         : null}
                                         <td className={singleClass}>
-                                            <DownloadableAccession file={file} buttonEnabled={buttonEnabled} clickHandler={meta.fileClick ? meta.fileClick : null} loggedIn={loggedIn} adminUser={adminUser} />
+                                            <DownloadableAccession file={biofile} buttonEnabled={buttonEnabled} clickHandler={meta.fileClick ? meta.fileClick : null} loggedIn={loggedIn} adminUser={adminUser} />
                                         </td>
-                                        <td className={singleClass}>{file.file_type}</td>
-                                        <td className={singleClass}>{rawIsIndex ? null : 'SE'}{file.read_length ? <span>{file.read_length + file.read_length_units}</span> : null}</td>
-                                        <td className={singleClass}>{file.paired_end}</td>
-                                        <td className={singleClass}>{file.output_type}</td>
-                                        <td className={singleClass}>{file.lab && file.lab.title ? file.lab.title : null}</td>
-                                        <td className={singleClass}>{dayjs.utc(file.date_created).format('YYYY-MM-DD')}</td>
-                                        <td className={singleClass}>{globals.humanFileSize(file.file_size)}</td>
-                                        <td className={singleClass}><ObjectAuditIcon object={file} isAuthorized={isAuthorized} /></td>
-                                        <td className={singleClass}><Status item={file} badgeSize="small" css="status__table-cell" /></td>
+                                        <td className={singleClass}>{biofile.file_type}</td>
+                                        <td className={singleClass}>{rawIsIndex ? null : 'SE'}{biofile.read_length ? <span>{biofile.read_length + biofile.read_length_units}</span> : null}</td>
+                                        <td className={singleClass}>{biofile.paired_end}</td>
+                                        <td className={singleClass}>{biofile.output_type}</td>
+                                        <td className={singleClass}>{biofile.lab && biofile.lab.title ? biofile.lab.title : null}</td>
+                                        <td className={singleClass}>{dayjs.utc(biofile.date_created).format('YYYY-MM-DD')}</td>
+                                        <td className={singleClass}>{globals.humanFileSize(biofile.file_size)}</td>
+                                        <td className={singleClass}><ObjectAuditIcon object={biofile} isAuthorized={isAuthorized} /></td>
+                                        <td className={singleClass}><Status item={biofile} badgeSize="small" css="status__table-cell" /></td>
                                     </tr>
                                 );
                             })}
@@ -811,11 +811,11 @@ class RawFileTable extends React.Component {
         if (files && files.length > 0) {
             // Group all files by their library accessions. Any files without replicates or
             // libraries get grouped under library 'Z' so they get sorted at the end.
-            const libGroups = _(files).groupBy((file) => {
+            const libGroups = _(files).groupBy((biofile) => {
                 // Groups have a 4-digit zero-filled biological replicate number concatenated with
                 // the library accession, e.g. 0002ENCLB158ZZZ.
-                const bioRep = file.biological_replicates ? globals.zeroFill(file.biological_replicates[0], 4) : '';
-                return bioRep + (file.bioreplicate && file.bioreplicate.biolibrary && file.bioreplicate.biolibrary.accession ? file.bioreplicate.biolibrary.accession : 'Z');
+                const bioRep = biofile.biological_replicates ? globals.zeroFill(biofile.biological_replicates[0], 4) : '';
+                return bioRep + (biofile.bioreplicate && biofile.bioreplicate.biolibrary && biofile.bioreplicate.biolibrary.accession ? biofile.bioreplicate.biolibrary.accession : 'Z');
             });
 
             // Split library/file groups into paired and non-paired library/file groups.
@@ -869,18 +869,18 @@ class RawFileTable extends React.Component {
 
                                 // Render each file's row, with the biological replicate and library
                                 // cells only on the first row.
-                                return groupFiles.sort((a, b) => (a.title < b.title ? -1 : 1)).map((file, i) => {
+                                return groupFiles.sort((a, b) => (a.title < b.title ? -1 : 1)).map((biofile, i) => {
                                     // Determine whether to draw a bottom border based on whether
                                     // this is the last file in a group (do draw) or not (don't
                                     // draw) and it's not within the last group (don't draw).
                                     const fileBottom = (i === groupFiles.length - 1 && groupBottom) ? 'group-bottom' : '';
 
                                     // Determine if the accession should be a button or not.
-                                    const buttonEnabled = !!(meta.graphedFiles && meta.graphedFiles[file['@id']]);
+                                    const buttonEnabled = !!(meta.graphedFiles && meta.graphedFiles[biofile['@id']]);
 
                                     // Prepare for run_type display
                                     return (
-                                        <tr key={file['@id']}>
+                                        <tr key={biofile['@id']}>
                                             {showReplicateNumber && i === 0 ?
                                                 <td rowSpan={groupFiles.length} className={`${groupBottom} merge-right table-raw-merged table-raw-biorep`}>
                                                     {groupFiles[0].biological_replicates.length > 0 ? <span>{groupFiles[0].biological_replicates[0]}</span> : <i>N/A</i>}
@@ -892,46 +892,46 @@ class RawFileTable extends React.Component {
                                                 </td>
                                             : null}
                                             <td className={fileBottom}>
-                                                <DownloadableAccession file={file} buttonEnabled={buttonEnabled} clickHandler={meta.fileClick ? meta.fileClick : null} loggedIn={loggedIn} adminUser={adminUser} />
+                                                <DownloadableAccession file={biofile} buttonEnabled={buttonEnabled} clickHandler={meta.fileClick ? meta.fileClick : null} loggedIn={loggedIn} adminUser={adminUser} />
                                             </td>
-                                            <td className={fileBottom}>{file.file_type}</td>
-                                            <td className={fileBottom}>{file.output_type}</td>
-                                            <td className={fileBottom}>{file.assembly}</td>
-                                            <td className={fileBottom}>{file.lab && file.lab.title ? file.lab.title : null}</td>
-                                            <td className={fileBottom}>{dayjs.utc(file.date_created).format('YYYY-MM-DD')}</td>
-                                            <td className={fileBottom}>{globals.humanFileSize(file.file_size)}</td>
-                                            <td className={fileBottom}><ObjectAuditIcon object={file} isAuthorized={isAuthorized} /></td>
-                                            <td className={fileBottom}><Status item={file} badgeSize="small" css="status__table-cell" /></td>
+                                            <td className={fileBottom}>{biofile.file_type}</td>
+                                            <td className={fileBottom}>{biofile.output_type}</td>
+                                            <td className={fileBottom}>{biofile.assembly}</td>
+                                            <td className={fileBottom}>{biofile.lab && biofile.lab.title ? biofile.lab.title : null}</td>
+                                            <td className={fileBottom}>{dayjs.utc(biofile.date_created).format('YYYY-MM-DD')}</td>
+                                            <td className={fileBottom}>{globals.humanFileSize(biofile.file_size)}</td>
+                                            <td className={fileBottom}><ObjectAuditIcon object={biofile} isAuthorized={isAuthorized} /></td>
+                                            <td className={fileBottom}><Status item={biofile} badgeSize="small" css="status__table-cell" /></td>
                                         </tr>
                                     );
                                 });
                             })}
-                            {nonGrouped.sort(sortBioReps).map((file, i) => {
+                            {nonGrouped.sort(sortBioReps).map((biofile, i) => {
                                 // Prepare for run_type display
                                 const rowClasses = [
                                     groupKeys.length > 0 && i === 0 ? 'table-raw-separator' : null,
                                 ];
 
                                 // Determine if accession should be a button or not.
-                                const buttonEnabled = !!(meta.graphedFiles && meta.graphedFiles[file['@id']]);
+                                const buttonEnabled = !!(meta.graphedFiles && meta.graphedFiles[biofile['@id']]);
 
                                 return (
-                                    <tr key={file['@id']} className={rowClasses.join(' ')}>
+                                    <tr key={biofile['@id']} className={rowClasses.join(' ')}>
                                         {showReplicateNumber ?
-                                            <td className="table-raw-biorep">{(file.biological_replicates && file.biological_replicates.length > 0) ? file.biological_replicates.sort((a, b) => a - b).join(', ') : 'N/A'}</td> :
+                                            <td className="table-raw-biorep">{(biofile.biological_replicates && biofile.biological_replicates.length > 0) ? biofile.biological_replicates.sort((a, b) => a - b).join(', ') : 'N/A'}</td> :
                                         null}
-                                        <td>{(file.bioreplicate && file.bioreplicate.biolibrary) ? file.bioreplicate.biolibrary.accession : 'N/A'}</td>
+                                        <td>{(biofile.bioreplicate && biofile.bioreplicate.biolibrary) ? biofile.bioreplicate.biolibrary.accession : 'N/A'}</td>
                                         <td>
-                                            <DownloadableAccession file={file} buttonEnabled={buttonEnabled} clickHandler={meta.fileClick ? meta.fileClick : null} loggedIn={loggedIn} adminUser={adminUser} />
+                                            <DownloadableAccession file={biofile} buttonEnabled={buttonEnabled} clickHandler={meta.fileClick ? meta.fileClick : null} loggedIn={loggedIn} adminUser={adminUser} />
                                         </td>
-                                        <td>{file.file_type}</td>
-                                        <td>{file.output_type}</td>
-                                        <td>{file.assembly}</td>
-                                        <td>{file.lab && file.lab.title ? file.lab.title : null}</td>
-                                        <td>{dayjs.utc(file.date_created).format('YYYY-MM-DD')}</td>
-                                        <td>{globals.humanFileSize(file.file_size)}</td>
-                                        <td><ObjectAuditIcon object={file} isAuthorized={isAuthorized} /></td>
-                                        <td><Status item={file} badgeSize="small" css="status__table-cell" /></td>
+                                        <td>{biofile.file_type}</td>
+                                        <td>{biofile.output_type}</td>
+                                        <td>{biofile.assembly}</td>
+                                        <td>{biofile.lab && biofile.lab.title ? biofile.lab.title : null}</td>
+                                        <td>{dayjs.utc(biofile.date_created).format('YYYY-MM-DD')}</td>
+                                        <td>{globals.humanFileSize(biofile.file_size)}</td>
+                                        <td><ObjectAuditIcon object={biofile} isAuthorized={isAuthorized} /></td>
+                                        <td><Status item={biofile} badgeSize="small" css="status__table-cell" /></td>
                                     </tr>
                                 );
                             })}
@@ -1033,9 +1033,9 @@ function collectAssembliesAnnotations(files) {
     let filterOptions = [];
 
     // Get the assembly and annotation of each file. Assembly is required to be included in the list
-    files.forEach((file) => {
-        if (file.output_category !== 'raw data' && file.assembly) {
-            filterOptions.push({ assembly: file.assembly, annotation: file.genome_annotation });
+    files.forEach((biofile) => {
+        if (biofile.output_category !== 'raw data' && biofile.assembly) {
+            filterOptions.push({ assembly: biofile.assembly, annotation: biofile.genome_annotation });
         }
     });
 
@@ -1251,8 +1251,8 @@ function qcAbbr(qc) {
  * @param {string} assembly - Currently selected assembly.
  * @param {string} annotation - Currently selected annotation.
  */
-function isCompatibleAssemblyAnnotation(file, assembly, annotation) {
-    return !file.assembly || (file.assembly === assembly && (file.genome_annotation || '') === annotation);
+function isCompatibleAssemblyAnnotation(biofile, assembly, annotation) {
+    return !biofile.assembly || (biofile.assembly === assembly && (biofile.genome_annotation || '') === annotation);
 }
 
 
@@ -1305,7 +1305,7 @@ function isCompatibleAssemblyAnnotation(file, assembly, annotation) {
  *         `file`'s own @id is one key of the returned object, but its value is null, to be filled
  *         when we process the child file.
  */
-function collectDerivedFroms(file, fileDataset, selectedAssembly, selectedAnnotation, allFiles) {
+function collectDerivedFroms(biofile, biofileDataset, selectedAssembly, selectedAnnotation, allFiles) {
     let accumulatedDerivedFroms = {};
 
     // Only step up the chain of derived froms if the file has one. Otherwise we're at a terminal
@@ -1313,12 +1313,12 @@ function collectDerivedFroms(file, fileDataset, selectedAssembly, selectedAnnota
     // going up the chain once we get to a file not in the current dataset, which might be a
     // processed file that doesn't belong in the graph, or a contributing file. Note that we have a
     // risk of infinite recursion if the file data incluees a derived_from loop, which isn't valid.
-    if (file.derived_from && file.derived_from.length > 0 && file.biodataset === fileDataset['@id']) {
+    if (biofile.derived_from && biofile.derived_from.length > 0 && biofile.biodataset === biofileDataset['@id']) {
         // File is the product of at least one derived_from chain, so for any files this file
         // derives from (parent files), go up the chain continuing to collect the files involved
         // in the current branch of the chain.
-        for (let i = 0; i < file.derived_from.length; i += 1) {
-            const derivedFileAtId = file.derived_from[i];
+        for (let i = 0; i < biofile.derived_from.length; i += 1) {
+            const derivedFileAtId = biofile.derived_from[i];
 
             // derived_from doesn't currently embed files; it's just a list of file @ids, and we
             // have to use `allFiles` to get the corresponding file objects.
@@ -1332,7 +1332,7 @@ function collectDerivedFroms(file, fileDataset, selectedAssembly, selectedAnnota
                 if (derivedFile) {
                     // The derived_from file exists in the current dataset, so use that as the new
                     // root of the derived_from chain to recursively go up the chain.
-                    branchDerivedFroms = collectDerivedFroms(derivedFile, fileDataset, selectedAssembly, selectedAnnotation, allFiles);
+                    branchDerivedFroms = collectDerivedFroms(derivedFile, biofileDataset, selectedAssembly, selectedAnnotation, allFiles);
                 } else {
                     // The derived_from file does not exist in the current dataset, so this is a
                     // terminal file that gets a clean entry to return to the lower level of the
@@ -1347,7 +1347,7 @@ function collectDerivedFroms(file, fileDataset, selectedAssembly, selectedAnnota
                 for (let j = 0; j < branchDerivedFromAtIds.length; j += 1) {
                     const oneDerivedFromAtId = branchDerivedFromAtIds[j];
                     if (branchDerivedFroms[oneDerivedFromAtId] === null) {
-                        branchDerivedFroms[oneDerivedFromAtId] = file;
+                        branchDerivedFroms[oneDerivedFromAtId] = biofile;
                     }
                 }
 
@@ -1362,7 +1362,7 @@ function collectDerivedFroms(file, fileDataset, selectedAssembly, selectedAnnota
 
     // Now add a property to the object of collected derived_froms keyed by the file's @id and
     // containing an null to be filled in by child files.
-    accumulatedDerivedFroms[file['@id']] = null;
+    accumulatedDerivedFroms[biofile['@id']] = null;
     return accumulatedDerivedFroms;
 }
 
@@ -1375,30 +1375,30 @@ function collectDerivedFroms(file, fileDataset, selectedAssembly, selectedAnnota
  * @param (bool) colorize - True to colorize the nodes according to their status by adding a CSS class for their status
  * @param {string} addClasses - CSS classes to add in addition to the ones generated by the file statuses.
  */
-const fileCssClassGen = (file, active, highlight, colorizeNode, addClasses) => {
-    const statusClass = colorizeNode ? ` graph-node--${globals.statusToClassElement(file.status)}` : '';
+const fileCssClassGen = (biofile, active, highlight, colorizeNode, addClasses) => {
+    const statusClass = colorizeNode ? ` graph-node--${globals.statusToClassElement(biofile.status)}` : '';
     return `pipeline-node-file${active ? ' active' : ''}${highlight ? ' highlight' : ''}${statusClass}${addClasses ? ` ${addClasses}` : ''}`;
 };
 
 
 // Assembly a graph of files, the QC objects that belong to them, and the steps that connect them.
-export function assembleGraph(files, highlightedFiles, dataset, options, loggedIn = false) {
+export function assembleGraph(files, highlightedFiles, biodataset, options, loggedIn = false) {
     // Calculate a step ID from a file's derived_from array.
-    function rDerivedFileIds(file) {
-        if (file.derived_from && file.derived_from.length > 0) {
-            return file.derived_from.sort().join();
+    function rDerivedFileIds(biofile) {
+        if (biofile.derived_from && biofile.derived_from.length > 0) {
+            return biofile.derived_from.sort().join();
         }
         return '';
     }
 
     // Calculate a QC node ID.
-    function rGenQcId(metric, file) {
-        return `qc:${metric['@id'] + file['@id']}`;
+    function rGenQcId(metric, biofile) {
+        return `qc:${metric['@id'] + biofile['@id']}`;
     }
 
     const { infoNode, selectedAssembly, selectedAnnotation, colorize } = options;
-    const derivedFileIds = _.memoize(rDerivedFileIds, file => file['@id']);
-    const genQcId = _.memoize(rGenQcId, (metric, file) => metric['@id'] + file['@id']);
+    const derivedFileIds = _.memoize(rDerivedFileIds, biofile => biofile['@id']);
+    const genQcId = _.memoize(rGenQcId, (metric, biofile) => metric['@id'] + biofile['@id']);
 
     // Begin collecting up information about the files from the search result, and gathering their
     // QC and analysis pipeline information.
@@ -1406,26 +1406,26 @@ export function assembleGraph(files, highlightedFiles, dataset, options, loggedI
     let matchingFiles = {}; // All files that match the current assembly/annotation, keyed by file @id
     const fileQcMetrics = {}; // List of all file QC metrics indexed by file @id
     const allPipelines = {}; // List of all pipelines indexed by step @id
-    const allowNoAssembly = dataset.assay_term_name === 'RNA Bind-n-Seq';
-    files.forEach((file) => {
+    const allowNoAssembly = biodataset.assay_term_name === 'RNA Bind-n-Seq';
+    files.forEach((biofile) => {
         // allFiles gets all files from search regardless of filtering.
-        allFiles[file['@id']] = file;
+        allFiles[biofile['@id']] = biofile;
 
         // matchingFiles gets just the files matching the given filtering assembly/annotation.
         // Note that if all assemblies and annotations are selected, this function isn't called
         // because no graph gets displayed in that case.
-        if (allowNoAssembly || ((file.assembly === selectedAssembly) && ((!file.genome_annotation && !selectedAnnotation) || (file.genome_annotation === selectedAnnotation)))) {
+        if (allowNoAssembly || ((biofile.assembly === selectedAssembly) && ((!biofile.genome_annotation && !selectedAnnotation) || (biofile.genome_annotation === selectedAnnotation)))) {
             // Note whether any files have an analysis step
-            const fileAnalysisStep = file.analysis_step_version && file.analysis_step_version.analysis_step;
-            if (!fileAnalysisStep || (file.derived_from && file.derived_from.length > 0)) {
+            const fileAnalysisStep = biofile.analysis_step_version && biofile.analysis_step_version.analysis_step;
+            if (!fileAnalysisStep || (biofile.derived_from && biofile.derived_from.length > 0)) {
                 // File has no analysis step or derives from other files, so it can be included in
                 // the graph.
-                matchingFiles[file['@id']] = file;
+                matchingFiles[biofile['@id']] = file;
 
                 // Collect any QC info that applies to this file and make it searchable by file
                 // @id.
-                if (file.quality_metrics && file.quality_metrics.length > 0) {
-                    fileQcMetrics[file['@id']] = file.quality_metrics.filter(qc => loggedIn || qc.status === 'released');
+                if (biofile.quality_metrics && biofile.quality_metrics.length > 0) {
+                    fileQcMetrics[biofile['@id']] = biofile.quality_metrics.filter(qc => loggedIn || qc.status === 'released');
                 }
 
                 // Save the pipeline array used for each step used by the file.
@@ -1444,7 +1444,7 @@ export function assembleGraph(files, highlightedFiles, dataset, options, loggedI
     let matchingFileAtIds = Object.keys(matchingFiles);
     for (let i = 0; i < matchingFileAtIds.length; i += 1) {
         const fileAtId = matchingFileAtIds[i];
-        derivedChains[fileAtId] = collectDerivedFroms(matchingFiles[fileAtId], dataset, selectedAssembly, selectedAnnotation, allFiles);
+        derivedChains[fileAtId] = collectDerivedFroms(matchingFiles[fileAtId], biodataset, selectedAssembly, selectedAnnotation, allFiles);
     }
 
     // Generate a list of file @ids that other files matching the current assembly and annotation
@@ -1538,8 +1538,8 @@ export function assembleGraph(files, highlightedFiles, dataset, options, loggedI
 
     // Make a list of contributing files that matchingFiles files derive from.
     const usedContributingFiles = {};
-    if (dataset.contributing_files && dataset.contributing_files.length > 0) {
-        dataset.contributing_files.forEach((contributingFileAtId) => {
+    if (biodataset.contributing_files && biodataset.contributing_files.length > 0) {
+        biodataset.contributing_files.forEach((contributingFileAtId) => {
             if (contributingFileAtId in allDerivedFroms) {
                 usedContributingFiles[contributingFileAtId] = allDerivedFroms[contributingFileAtId];
             }
@@ -1606,7 +1606,7 @@ export function assembleGraph(files, highlightedFiles, dataset, options, loggedI
     // `allDerivedFroms`.
 
     // Create an empty graph architecture that we fill in next.
-    const jsonGraph = new JsonGraph(dataset.accession);
+    const jsonGraph = new JsonGraph(biodataset.accession);
 
     // Create nodes for the replicates.
     Object.keys(allReplicates).forEach((replicateNum) => {
@@ -1623,14 +1623,14 @@ export function assembleGraph(files, highlightedFiles, dataset, options, loggedI
     // Go through each file matching the currently selected assembly/annotation and add it to our
     // graph.
     Object.keys(matchingFiles).forEach((fileId) => {
-        const file = matchingFiles[fileId];
+        const biofile = matchingFiles[fileId];
 
         // check to see if file should be highlighted (if it is part of a filtered list)
         const highlightToggle = highlightedFiles.some(highlight => highlight['@id'] === fileId);
 
-        if (!file) {
+        if (!biofile) {
             if (allMissingFiles.indexOf(fileId) === -1) {
-                const fileNodeId = `file:${fileId}`;
+                const fileNodeId = `biofile:${fileId}`;
                 const fileNodeLabel = `${globals.atIdToAccession(fileId)}`;
                 const fileCssClass = `pipeline-node-file contributing${infoNode === fileNodeId ? ' active' : ''} ${highlightToggle ? ' highlight' : ''}`;
 
@@ -1644,18 +1644,18 @@ export function assembleGraph(files, highlightedFiles, dataset, options, loggedI
                 });
             }
         } else {
-            const fileNodeId = `file:${file['@id']}`;
-            const fileNodeLabel = `${file.title} (${file.output_type})`;
-            const fileCssClass = fileCssClassGen(file, !!(infoNode && infoNode.id === fileNodeId), highlightToggle, colorize);
-            const fileRef = file;
-            const replicateNode = (file.biological_replicates && file.biological_replicates.length === 1) ? jsonGraph.getNode(`rep:${file.biological_replicates[0]}`) : null;
+            const fileNodeId = `biofile:${biofile['@id']}`;
+            const fileNodeLabel = `${biofile.title} (${biofile.output_type})`;
+            const fileCssClass = fileCssClassGen(biofile, !!(infoNode && infoNode.id === fileNodeId), highlightToggle, colorize);
+            const fileRef = biofile;
+            const replicateNode = (biofile.biological_replicates && biofile.biological_replicates.length === 1) ? jsonGraph.getNode(`rep:${biofile.biological_replicates[0]}`) : null;
             let metricsInfo;
 
             // Add QC metrics info from the file to the list to generate the nodes later.
             if (fileQcMetrics[fileId] && fileQcMetrics[fileId].length > 0) {
                 const sortedMetrics = fileQcMetrics[fileId].sort((a, b) => (a['@type'][0] > b['@type'][0] ? 1 : (a['@type'][0] < b['@type'][0] ? -1 : 0)));
                 metricsInfo = sortedMetrics.map((metric) => {
-                    const qcId = genQcId(metric, file);
+                    const qcId = genQcId(metric, biofile);
                     return {
                         id: qcId,
                         label: qcAbbr(metric),
@@ -1663,7 +1663,7 @@ export function assembleGraph(files, highlightedFiles, dataset, options, loggedI
                         class: `pipeline-node-qc-metric${infoNode && infoNode.id === qcId ? ' active' : ''}`,
                         tooltip: true,
                         ref: metric,
-                        parent: file,
+                        parent: biofile,
                     };
                 });
             }
@@ -1671,7 +1671,7 @@ export function assembleGraph(files, highlightedFiles, dataset, options, loggedI
             // Add a node for a regular searched file.
             jsonGraph.addNode(fileNodeId, fileNodeLabel, {
                 cssClass: fileCssClass,
-                type: 'File',
+                type: 'Biofile',
                 shape: 'rect',
                 cornerRadius: 16,
                 parentNode: replicateNode,
@@ -1684,16 +1684,16 @@ export function assembleGraph(files, highlightedFiles, dataset, options, loggedI
             let label;
             let pipelineInfo;
             let error;
-            const fileAnalysisStep = file.analysis_step_version && file.analysis_step_version.analysis_step;
+            const fileAnalysisStep = biofile.analysis_step_version && biofile.analysis_step_version.analysis_step;
             if (fileAnalysisStep) {
                 // Make an ID and label for the step
-                stepId = `step:${derivedFileIds(file) + fileAnalysisStep['@id']}`;
+                stepId = `step:${derivedFileIds(biofile) + fileAnalysisStep['@id']}`;
                 label = fileAnalysisStep.analysis_step_types;
                 pipelineInfo = allPipelines[fileAnalysisStep['@id']];
                 error = false;
-            } else if (derivedFileIds(file)) {
+            } else if (derivedFileIds(biofile)) {
                 // File derives from others, but no analysis step; make dummy step.
-                stepId = `error:${derivedFileIds(file)}`;
+                stepId = `error:${derivedFileIds(biofile)}`;
                 label = 'Software unknown';
                 pipelineInfo = null;
                 error = true;
@@ -1714,22 +1714,22 @@ export function assembleGraph(files, highlightedFiles, dataset, options, loggedI
                         parentNode: replicateNode,
                         ref: fileAnalysisStep,
                         pipelines: pipelineInfo,
-                        fileId: file['@id'],
-                        fileAccession: file.title,
-                        stepVersion: file.analysis_step_version,
+                        fileId: biofile['@id'],
+                        fileAccession: biofile.title,
+                        stepVersion: biofile.analysis_step_version,
                     });
                 }
 
                 // Connect the file to the step, and the step to the derived_from files
                 jsonGraph.addEdge(stepId, fileNodeId);
-                file.derived_from.forEach((derivedFromAtId) => {
+                biofile.derived_from.forEach((derivedFromAtId) => {
                     if (!allDerivedFroms[derivedFromAtId]) {
                         return;
                     }
                     const derivedFromFile = allFiles[derivedFromAtId] || allMissingFiles.some(missingFileId => missingFileId === derivedFromAtId);
                     if (derivedFromFile) {
                         // Not derived from a contributing file; just add edges normally.
-                        const derivedFileId = `file:${derivedFromAtId}`;
+                        const derivedFileId = `biofile:${derivedFromAtId}`;
                         if (!jsonGraph.getEdge(derivedFileId, stepId)) {
                             jsonGraph.addEdge(derivedFileId, stepId);
                         }
@@ -1744,7 +1744,7 @@ export function assembleGraph(files, highlightedFiles, dataset, options, loggedI
                                 jsonGraph.addEdge(derivedFileId, stepId);
                             }
                         } else if (usedContributingFiles[derivedFromAtId]) {
-                            const derivedFileId = `file:${derivedFromAtId}`;
+                            const derivedFileId = `biofile:${derivedFromAtId}`;
                             if (!jsonGraph.getEdge(derivedFileId, stepId)) {
                                 jsonGraph.addEdge(derivedFileId, stepId);
                             }
@@ -1775,13 +1775,13 @@ export function assembleGraph(files, highlightedFiles, dataset, options, loggedI
     // Add missing-file nodes to the graph.
     allMissingFiles.forEach((missingFileAtId) => {
         const fileNodeAccession = globals.atIdToAccession(missingFileAtId);
-        const fileNodeId = `file:${missingFileAtId}`;
+        const fileNodeId = `biofile:${missingFileAtId}`;
         const fileNodeLabel = `${fileNodeAccession} (unknown)`;
         const fileCssClass = 'pipeline-node-file error';
 
         jsonGraph.addNode(fileNodeId, fileNodeLabel, {
             cssClass: fileCssClass,
-            type: 'File',
+            type: 'Biofile',
             shape: 'rect',
             cornerRadius: 16,
         });
@@ -1792,7 +1792,7 @@ export function assembleGraph(files, highlightedFiles, dataset, options, loggedI
 
 
 const FileGraph = (props) => {
-    const { files, highlightedFiles, dataset, infoNode, selectedAssembly, selectedAnnotation, colorize, handleNodeClick, schemas, loggedIn } = props;
+    const { files, highlightedFiles, biodataset, infoNode, selectedAssembly, selectedAnnotation, colorize, handleNodeClick, schemas, loggedIn } = props;
 
     // Build node graph of the files and analysis steps with this experiment
     let graph;
@@ -1801,7 +1801,7 @@ const FileGraph = (props) => {
             graph = assembleGraph(
                 files,
                 highlightedFiles,
-                dataset,
+                biodataset,
                 {
                     infoNode,
                     selectedAssembly,
@@ -1811,7 +1811,7 @@ const FileGraph = (props) => {
                 loggedIn
             );
         } catch (e) {
-            console.warn(e.message + (e.file0 ? ` -- file0:${e.file0}` : '') + (e.file1 ? ` -- file1:${e.file1}` : ''));
+            console.warn(e.message + (e.biofile0 ? ` -- biofile0:${e.biofile0}` : '') + (e.biofile1 ? ` -- biofile1:${e.biofile1}` : ''));
         }
     }
 
@@ -1834,7 +1834,7 @@ const FileGraph = (props) => {
 FileGraph.propTypes = {
     files: PropTypes.array.isRequired, // Array of files we're graphing
     highlightedFiles: PropTypes.array.isRequired, // Array of files that should be highlighted on graph
-    dataset: PropTypes.object.isRequired, // dataset these files are being rendered into
+    biodataset: PropTypes.object.isRequired, // dataset these files are being rendered into
     selectedAssembly: PropTypes.string, // Currently selected assembly
     selectedAnnotation: PropTypes.string, // Currently selected annotation
     infoNode: PropTypes.object, // Currently highlighted node
@@ -2005,10 +2005,10 @@ function createFacetObject(propertyKey, fileList, filters) {
     });
     // If only 'Assembly' filter is selected, we want to collect all possible terms from 'newFile List' and then we are done
     if (singleFilter) {
-        newFileList.forEach((file) => {
-            let property = file[propertyKey];
+        newFileList.forEach((biofile) => {
+            let property = biofile[propertyKey];
             if (propertyKey === 'biological_replicates') {
-                property = (file.biological_replicates ? file.biological_replicates.sort((a, b) => a - b).join(', ') : '');
+                property = (biofile.biological_replicates ? biofile.biological_replicates.sort((a, b) => a - b).join(', ') : '');
                 if (property === '') {
                     return;
                 }
@@ -2022,10 +2022,10 @@ function createFacetObject(propertyKey, fileList, filters) {
     // If multiple filters are selected, it gets more complicated
     } else {
         // Start by adding properties from filtered list of files
-        fileListFiltered.forEach((file) => {
-            let property = file[propertyKey];
+        fileListFiltered.forEach((biofile) => {
+            let property = biofile[propertyKey];
             if (propertyKey === 'biological_replicates') {
-                property = (file.biological_replicates ? file.biological_replicates.sort((a, b) => a - b).join(', ') : '');
+                property = (biofile.biological_replicates ? biofile.biological_replicates.sort((a, b) => a - b).join(', ') : '');
                 if (property === '') {
                     return;
                 }
@@ -2038,16 +2038,16 @@ function createFacetObject(propertyKey, fileList, filters) {
         });
         // We also want to display terms that could be added if the user wants to increase the displayed results
         // These terms need to satisfy all of the filters that are already selected
-        newFileList.forEach((file) => {
-            let property = file[propertyKey];
+        newFileList.forEach((biofile) => {
+            let property = biofile[propertyKey];
             if (propertyKey === 'biological_replicates') {
-                property = (file.biological_replicates ? file.biological_replicates.sort((a, b) => a - b).join(', ') : '');
+                property = (biofile.biological_replicates ? biofile.biological_replicates.sort((a, b) => a - b).join(', ') : '');
                 if (property === '') {
                     return;
                 }
             }
             // We only want to look at files that are not in 'fileListFiltered'
-            if (!(fileListFiltered.includes(file))) {
+            if (!(fileListFiltered.includes(biofile))) {
                 // If this file's property was a filter, how many results would there be?
                 let fakeFilters = Object.assign({}, filters);
                 fakeFilters = addFilter(fakeFilters, property, propertyKey);
@@ -2056,7 +2056,7 @@ function createFacetObject(propertyKey, fileList, filters) {
                     fakeFileList = filterItems(fakeFileList, f, fakeFilters[f]);
                 });
                 // If there would be results, add them
-                if (fakeFileList.includes(file)) {
+                if (fakeFileList.includes(biofile)) {
                     if (facetObject[property]) {
                         facetObject[property] += 1;
                     } else {
@@ -2126,7 +2126,7 @@ export const compileAnalyses = (experiment, files) => {
 
             // Fill in the compiled object with the labs that group the files.
             compiledAnalyses = [];
-            const fileIds = files.map(file => file['@id']);
+            const fileIds = files.map(biofile => biofile['@id']);
             Object.keys(analysesByLab).forEach((pipelineLab) => {
                 // For one lab, group all analyses by their assembly/annotation, then combine all
                 // file arrays for those with matching pipeline lab, assembly/annotation, and RFA.
@@ -2135,7 +2135,7 @@ export const compileAnalyses = (experiment, files) => {
                     // Combine all analyses files that share the same pipeline lab, assembly, and
                     // annotation and add each to the compiled list. Filter out any not included in
                     // the experiment's files.
-                    const assemblyFiles = _.uniq(analysesByAssembly[assembly].reduce((accFiles, analyses) => accFiles.concat(analyses.files), []).filter(file => fileIds.includes(file)));
+                    const assemblyFiles = _.uniq(analysesByAssembly[assembly].reduce((accFiles, analyses) => accFiles.concat(analyses.files), []).filter(biofile => fileIds.includes(biofile)));
                     if (assemblyFiles.length > 0) {
                         compiledAnalyses.push({
                             title: `${pipelineLab} ${assembly}`,
@@ -2211,11 +2211,11 @@ const TabPanelFacets = (props) => {
 
     // Create object for Assembly facet from list of all files
     // We do not count how many results there are for a given assembly because we will not display the bars
-    fileList.forEach((file) => {
-        if (file.genome_annotation && file.assembly && !assembly[`${file.assembly} ${file.genome_annotation}`]) {
-            assembly[`${file.assembly} ${file.genome_annotation}`] = computeAssemblyAnnotationValue(file.assembly, file.genome_annotation);
-        } else if (file.assembly && !assembly[file.assembly] && !(file.genome_annotation)) {
-            assembly[file.assembly] = computeAssemblyAnnotationValue(file.assembly);
+    fileList.forEach((biofile) => {
+        if (biofile.genome_annotation && biofile.assembly && !assembly[`${biofile.assembly} ${biofile.genome_annotation}`]) {
+            assembly[`${biofile.assembly} ${biofile.genome_annotation}`] = computeAssemblyAnnotationValue(biofile.assembly, biofile.genome_annotation);
+        } else if (biofile.assembly && !assembly[biofile.assembly] && !(biofile.genome_annotation)) {
+            assembly[biofile.assembly] = computeAssemblyAnnotationValue(biofile.assembly);
         }
     });
 
@@ -2416,11 +2416,11 @@ class FileGalleryRendererComponent extends React.Component {
         if (this.state.currentTab === 'browser') {
             fileList = filterForVisualizableFiles(fileList);
         }
-        fileList.forEach((file) => {
-            if (file.genome_annotation && file.assembly && !assembly[`${file.assembly} ${file.genome_annotation}`]) {
-                assembly[`${file.assembly} ${file.genome_annotation}`] = computeAssemblyAnnotationValue(file.assembly, file.genome_annotation);
-            } else if (file.assembly && !assembly[file.assembly] && !(file.genome_annotation)) {
-                assembly[file.assembly] = computeAssemblyAnnotationValue(file.assembly);
+        fileList.forEach((biofile) => {
+            if (biofile.genome_annotation && biofile.assembly && !assembly[`${biofile.assembly} ${biofile.genome_annotation}`]) {
+                assembly[`${biofile.assembly} ${biofile.genome_annotation}`] = computeAssemblyAnnotationValue(biofile.assembly, biofile.genome_annotation);
+            } else if (biofile.assembly && !assembly[biofile.assembly] && !(biofile.genome_annotation)) {
+                assembly[biofile.assembly] = computeAssemblyAnnotationValue(biofile.assembly);
             }
         });
         return assembly;
@@ -2667,7 +2667,7 @@ class FileGalleryRendererComponent extends React.Component {
             // The user has chosen to not see files with statuses in
             // FileGalleryRenderer.inclusionStatuses. Create an array with files having those
             // statuses filtered out. Start by making an array of files with a filtered-out status
-            return files.filter(file => FileGalleryRendererComponent.inclusionStatuses.indexOf(file.status) === -1);
+            return files.filter(biofile => FileGalleryRendererComponent.inclusionStatuses.indexOf(biofile.status) === -1);
         }
 
         // The user requested seeing everything including revoked and archived files, so just
@@ -2714,10 +2714,10 @@ class FileGalleryRendererComponent extends React.Component {
         // The @id of the affected file is in the name of the clicked <input>.
         const clickedFileAtId = synthEvent.target.name;
         this.setState((state) => {
-            const matchingIndex = state.selectedBrowserFiles.findIndex(file => file['@id'] === clickedFileAtId);
+            const matchingIndex = state.selectedBrowserFiles.findIndex(biofile => biofile['@id'] === clickedFileAtId);
             if (matchingIndex === -1) {
                 // Add clicked file to array of selected files.
-                const matchingFile = state.files.find(file => file['@id'] === clickedFileAtId);
+                const matchingFile = state.files.find(biofile => biofile['@id'] === clickedFileAtId);
                 return { selectedBrowserFiles: state.selectedBrowserFiles.concat(matchingFile) };
             }
             // Remove clicked file from array of selected files.
@@ -2800,7 +2800,7 @@ class FileGalleryRendererComponent extends React.Component {
             // Filter renderable and visualizable files to include only those in the matching
             // analyses plus raw-data files. If no matching analyses, all files get included.
             const selectedAnalysis = this.state.compiledAnalyses[this.state.selectedAnalysesIndex];
-            const graphAnalysesFiles = graphIncludedFiles.filter(file => selectedAnalysis.files.includes(file['@id']));
+            const graphAnalysesFiles = graphIncludedFiles.filter(biofile => selectedAnalysis.files.includes(biofile['@id']));
             if (graphAnalysesFiles.length > 0) {
                 // Collect files that these files derive from, and add any missing ones to the
                 // list of files to include in the graph.
@@ -2813,11 +2813,11 @@ class FileGalleryRendererComponent extends React.Component {
                     Object.keys(derivedFiles).forEach((derivedFileId) => {
                         if (derivedFiles[derivedFileId]) {
                             // See if the file is already included in the analyses' files.
-                            const includedFile = graphAnalysesFiles.find(file => file['@id'] === derivedFileId);
+                            const includedFile = graphAnalysesFiles.find(biofile => biofile['@id'] === derivedFileId);
                             if (!includedFile) {
                                 // The derived-from file isn't already included, so add it
                                 // if it can be found in allFiles (won't necessarily be).
-                                const derivedFile = this.state.allFiles.find(file => file['@id'] === derivedFileId);
+                                const derivedFile = this.state.allFiles.find(biofile => biofile['@id'] === derivedFileId);
                                 if (derivedFile) {
                                     additionalFiles.push(derivedFile);
                                 }
@@ -2827,7 +2827,7 @@ class FileGalleryRendererComponent extends React.Component {
                 });
 
                 // The graphed files now also include the derived-from files and raw files.
-                graphIncludedFiles = graphAnalysesFiles.concat(_.uniq(additionalFiles), graphIncludedFiles.filter(file => file.output_category === 'raw data'));
+                graphIncludedFiles = graphAnalysesFiles.concat(_.uniq(additionalFiles), graphIncludedFiles.filter(biofile => biofile.output_category === 'raw data'));
             } else {
                 // We know at this point there's nothing to graph nor browse for the selected
                 // analyses.
@@ -2867,7 +2867,7 @@ class FileGalleryRendererComponent extends React.Component {
 
         // Prepare to display the file information modal.
         const modalTypeMap = {
-        File: 'file',
+        Biofile: 'biofile',
             // Step: 'analysis-step',
             // QualityMetric: 'quality-metric',
         };
@@ -2914,7 +2914,7 @@ class FileGalleryRendererComponent extends React.Component {
                             </TabPanelPane>
                             <TabPanelPane key="graph">
                                 <FileGraph
-                                    dataset={context}
+                                    biodataset={context}
                                     files={graphIncludedFiles}
                                     highlightedFiles={highlightedFiles}
                                     infoNode={this.state.infoNode}
@@ -3088,7 +3088,7 @@ class FileQCButton extends React.Component {
     handleClick() {
         const node = {
             '@type': ['QualityMetric'],
-            parent: this.props.file,
+            parent: this.props.biofile,
             ref: this.props.qc,
             schemas: this.props.schemas,
         };
@@ -3125,9 +3125,9 @@ const FileDetailView = function FileDetailView(node, qcClick, auditIndicators, a
         let contributingAccession;
 
         if (node.metadata.contributing) {
-            const accessionStart = selectedFile.dataset.indexOf('/', 1) + 1;
-            const accessionEnd = selectedFile.dataset.indexOf('/', accessionStart) - accessionStart;
-            contributingAccession = selectedFile.dataset.substr(accessionStart, accessionEnd);
+            const accessionStart = selectedFile.biodataset.indexOf('/', 1) + 1;
+            const accessionEnd = selectedFile.biodataset.indexOf('/', accessionStart) - accessionStart;
+            contributingAccession = selectedFile.biodataset.substr(accessionStart, accessionEnd);
         }
         const dateString = !!selectedFile.date_created && dayjs.utc(selectedFile.date_created).format('YYYY-MM-DD');
         header = (
@@ -3229,10 +3229,10 @@ const FileDetailView = function FileDetailView(node, qcClick, auditIndicators, a
                         </div>
                     : null}
 
-                    {node.metadata.contributing && selectedFile.dataset ?
+                    {node.metadata.contributing && selectedFile.biodataset ?
                         <div data-test="contributedfrom">
                             <dt>Contributed from</dt>
-                            <dd><a href={selectedFile.dataset}>{contributingAccession}</a></dd>
+                            <dd><a href={selectedFile.biodataset}>{contributingAccession}</a></dd>
                         </div>
                     : null}
 
@@ -3304,7 +3304,7 @@ const FileDetailView = function FileDetailView(node, qcClick, auditIndicators, a
     return { header, body, type: 'File' };
 };
 
-globals.graphDetail.register(FileDetailView, 'File');
+globals.graphDetail.register(FileDetailView, 'Biofile');
 
 
 export const CoalescedDetailsView = function CoalescedDetailsView(node) {

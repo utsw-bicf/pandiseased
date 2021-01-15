@@ -861,6 +861,9 @@
         "paired_with": {
             "title": "Paired with"
         },
+        "href": {
+            "title": "Download URL"
+        },
         "date_created": {
             "title": "Date created"
         },
