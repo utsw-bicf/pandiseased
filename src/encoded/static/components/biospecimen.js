@@ -51,8 +51,8 @@ class Biospecimen extends React.Component {
                 if (context.surgery.pathology_report[i].ajcc_version){
                     list.push(<div data-test="surgery.pathology_report"><dt>AJCC Version</dt><dd>{context.surgery.pathology_report[i].ajcc_version}</dd> </div>)
                 }
-                
-                
+
+
             }
         }
 
@@ -83,7 +83,6 @@ class Biospecimen extends React.Component {
                     <div className="col-sm-12">
                         <Breadcrumbs root="/search/?type=Biospecimen" crumbs={crumbs} crumbsReleased={crumbsReleased} />
                         <h2>{context.accession}</h2>
-                        <ItemAccessories item={context}/>
                     </div>
 
                 </header>
@@ -92,8 +91,8 @@ class Biospecimen extends React.Component {
                     <PanelBody addClasses="panel__split">
                         <div className="panel__split-element">
                             <div className="panel__split-heading panel__split-heading--experiment">
-                                <h4>Specimen Information</h4>  
-                            </div> 
+                                <h4>Specimen Information</h4>
+                            </div>
 
                             <dl className="key-value">
                                 <div data-test="status">
@@ -166,7 +165,7 @@ class Biospecimen extends React.Component {
                                     <dd><a href={context.surgery['@id']}>{context.surgery.accession}</a></dd>
                                 </div>}
                                 {this.createPathTable()}
-                            </dl>}    
+                            </dl>}
                         </div>
                     </PanelBody>
                 </Panel>
@@ -185,4 +184,3 @@ class Biospecimen extends React.Component {
 }
 
 globals.contentViews.register(Biospecimen, 'Biospecimen');
-

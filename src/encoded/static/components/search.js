@@ -440,11 +440,6 @@ class BiospecimenComponent extends React.Component {
                         <Status item={result.status} badgeSize="small" css="result-table__status" />
                         {this.props.auditIndicators(result.audit, result['@id'], { session: this.context.session, search: true })}
                     </div>
-                    {cartControls ?
-                        <div className="result-item__cart-control">
-                            <CartToggle element={result} />
-                        </div>
-                    : null}
                     <PickerActions {...this.props} />
 
                 </div>
