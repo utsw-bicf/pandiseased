@@ -42,7 +42,8 @@ const portal = {
             children: [
                 { id: 'patientsearch', title: 'Patient Search', url: '/search/?type=Patient&status=released' },
                 { id: 'samplesearch', title: 'Biospecimen Search', url: '/search/?type=Biospecimen&status=released' },
-                { id: 'genomicssearch', title: 'Biodatasets/Bioexperiments Search', url: '/search/?type=Biodataset&status=released' },
+                { id: 'bioexperimentsearch', title: 'Bioexperiment Search', url: '/search/?type=Bioexperiment&status=released' },
+                // { id: 'biodatasetsearch', title: 'Biodataset Search', url: '/search/?type=Biodataset&status=released' },
                 { id: 'Surgerysearch', title: 'Surgery/Pathreports Search', url: '/search/?type=Surgery&status=released' },
                 { id: 'sep-mm-1' },
                 { id: 'patientmatrix', title: 'Patient Matrix', url: '/matrix/?type=Patient&status=released' },
@@ -67,6 +68,7 @@ const portal = {
             title: 'Help',
             children: [
                 { id: 'gettingstarted', title: 'Using the Portal', url: '/help/getting-started/' },
+                { id: 'dictionary', title: 'Dictionary', url: '/help/dictionary' },
                 { id: 'cart', title: 'Cohort', url: '/help/cart/' },
                 { id: 'restapi', title: 'REST API', url: '/help/rest-api/' },
                 { id: 'citingkce', title: 'Citing KCE', url: '/help/citing-kce' },
@@ -1143,7 +1145,7 @@ class App extends React.Component {
                     <link rel="canonical" href={canonical} />
                     <link href="https://fonts.googleapis.com/css2?family=Mada:wght@200;400;500;600;700&family=Oswald:wght@200;300;400;500&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet" />
                     <script async src="//www.google-analytics.com/analytics.js" />
-                    <script async src={`https://cdn.walkme.com/users/8c7ff9322d01408798869806f9f5a132/${globals.isProductionHost(this.props.href) ? '' : 'test/'}walkme_8c7ff9322d01408798869806f9f5a132_https.js`} />
+
                     {this.props.inline ? <script data-prop-name="inline" dangerouslySetInnerHTML={{ __html: this.props.inline }} /> : null}
                     {this.props.styles ? <link rel="stylesheet" href={this.props.styles} /> : null}
                     {newsHead(this.props, `${hrefUrl.protocol}//${hrefUrl.host}`)}

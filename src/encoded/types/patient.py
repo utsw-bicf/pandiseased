@@ -146,14 +146,14 @@ def getLabsAndVitalsRange(value, low, high, lowRange, normalRange, highRange):
         if highRange == "default":
             return "Above (" + str(high) + " >=)"
         else:
-            return highRange        
+            return highRange
     else:
         if normalRange == "default":
             return "Normal Range (" + str(low) + " >= and < " + str(high) +")"
 
-        else: 
+        else:
             return normalRange
-        
+
 
 
 @collection(
@@ -313,7 +313,7 @@ class Patient(Item):
                     if len(path_reports) > 0:
                         for path_report in path_reports:
                             path_report_obj = request.embed(path_report, '@@object')
-                            if path_report_obj['path_source_procedure'] == 'path_metasis':
+                            if path_report_obj['path_source_procedure'] == 'path_metastasis':
                                 status = "Yes"
         return status
 
@@ -730,7 +730,7 @@ class Patient(Item):
                     path_report_obj = request.embed(path_report, '@@object')
                     if path_report_obj['path_source_procedure'] == "path_nephrectomy" or path_report_obj['path_source_procedure'] == "path_biopsy":
                         non_mets_dates.append(surgery_object['date'])
-                    elif  path_report_obj['path_source_procedure'] == "path_metasis":
+                    elif  path_report_obj['path_source_procedure'] == "path_metastasis":
                         mets_dates.append(surgery_object['date'])
 
         if len(non_mets_dates) > 0 :
@@ -789,7 +789,7 @@ class Patient(Item):
                 follow_up_duration = (follow_up_end_date-follow_up_start_date).days/365
 
                 if follow_up_duration >= 5:
-                    follow_up_duration_range = "> 5 year"
+                    follow_up_duration_range = "5+ year"
                 elif follow_up_duration >= 3:
                     follow_up_duration_range = "3 - 5 year"
                 elif follow_up_duration >= 1.5:
@@ -1080,7 +1080,7 @@ class Patient(Item):
             'LDH': "Not Available"
         }
         labs_and_vitals['first_Nephrectomy_date_string'] = first_Nephrectomy_date_string
-        # find the first Nephrectomy 
+        # find the first Nephrectomy
         if len(surgery) > 0:
             for surgery_record in surgery:
                 surgery_object = request.embed(surgery_record, '@@object')
@@ -1097,8 +1097,8 @@ class Patient(Item):
                 labs_and_vitals['first_Nephrectomy_date_string'] = first_Nephrectomy_date_string
 
                 #find dates Within 30 days prior to Date of Nephrectomy
-                if len(labs)>0:             
-                    albuminList = []                
+                if len(labs)>0:
+                    albuminList = []
                     calciumList = []
                     creatinineList = []
                     hemoglobinList = []
@@ -1121,7 +1121,7 @@ class Patient(Item):
                                 "value": lab_value
                             }
                             if lab_type == "ALBUMIN":
-                                albuminList.append(lab)              
+                                albuminList.append(lab)
                             elif lab_type == "CALCIUM":
                                 calciumList.append(lab)
                             elif lab_type == "CREATININE":
@@ -1139,55 +1139,55 @@ class Patient(Item):
                             else:
                                 wbcList.append(lab)
                     if len(albuminList) > 0:
-                        albuminList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d')) 
-                        albuminLab = albuminList[-1]  
-                        labs_and_vitals["Albumin"] = getLabsAndVitalsRange(albuminLab["value"], 3.5, 5.3, "default", "default", "default") 
+                        albuminList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d'))
+                        albuminLab = albuminList[-1]
+                        labs_and_vitals["Albumin"] = getLabsAndVitalsRange(albuminLab["value"], 3.5, 5.3, "default", "default", "default")
                         labs_and_vitals["AlbuminValue"] = albuminLab["value"]
                         labs_and_vitals["AlbuminDate"] = albuminLab["date"]
                     if len(calciumList) > 0:
-                        calciumList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d')) 
-                        calciumLab = calciumList[-1]  
-                        labs_and_vitals["Calcium"] = getLabsAndVitalsRange(calciumLab["value"], 8.8, 10.2, "default", "default", "default")    
+                        calciumList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d'))
+                        calciumLab = calciumList[-1]
+                        labs_and_vitals["Calcium"] = getLabsAndVitalsRange(calciumLab["value"], 8.8, 10.2, "default", "default", "default")
                         labs_and_vitals["CalciumValue"] = calciumLab["value"]
                         labs_and_vitals["CalciumDate"] = calciumLab["date"]
                     if len(creatinineList) > 0:
-                        creatinineList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d')) 
-                        creatinineLab = creatinineList[-1] 
+                        creatinineList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d'))
+                        creatinineLab = creatinineList[-1]
                         labs_and_vitals["Creatinine"] = getLabsAndVitalsRange(creatinineLab["value"], 0.67, 1.17, "default", "default", "default")
                         labs_and_vitals["CreatinineValue"] = creatinineLab["value"]
                         labs_and_vitals["CreatinineDate"] = creatinineLab["date"]
                     if len(hemoglobinList) > 0:
-                        hemoglobinList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d')) 
+                        hemoglobinList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d'))
                         hemoglobinLab = hemoglobinList[-1]
                         labs_and_vitals["Hemoglobin"] = getLabsAndVitalsRange(hemoglobinLab["value"], 12.4, 17.4, "default", "default", "default")
                         labs_and_vitals["HemoglobinValue"] = hemoglobinLab["value"]
                         labs_and_vitals["HemoglobinDate"] = hemoglobinLab["date"]
                     if len(ldhList) > 0:
-                        ldhList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d')) 
+                        ldhList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d'))
                         ldhLab = ldhList[-1]
                         labs_and_vitals["LDH"] = getLabsAndVitalsRange(ldhLab["value"], 135, 226, "default", "default", "default")
                         labs_and_vitals["LDHValue"] = ldhLab["value"]
                         labs_and_vitals["LDHDate"] = ldhLab["date"]
                     if len(neutrophilsList) > 0:
-                        neutrophilsList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d')) 
+                        neutrophilsList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d'))
                         neutrophilsLab = neutrophilsList[-1]
                         labs_and_vitals["Neutrophils"] = getLabsAndVitalsRange(neutrophilsLab["value"], 1.5, 7.4, "default", "default", "default")
                         labs_and_vitals["NeutrophilsValue"] = neutrophilsLab["value"]
                         labs_and_vitals["NeutrophilsDate"] = neutrophilsLab["date"]
                     if len(plateletsList) > 0:
-                        plateletsList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d')) 
+                        plateletsList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d'))
                         plateletsLab = plateletsList[-1]
                         labs_and_vitals["Platelets"] = getLabsAndVitalsRange(plateletsLab["value"], 141, 451, "default", "default", "default")
                         labs_and_vitals["PlateletsValue"] = plateletsLab["value"]
                         labs_and_vitals["PlateletsDate"] = plateletsLab["date"]
                     if len(sodiumList) > 0:
-                        sodiumList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d')) 
+                        sodiumList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d'))
                         sodiumLab = sodiumList[-1]
                         labs_and_vitals["Sodium"] = getLabsAndVitalsRange(sodiumLab["value"], 135, 146, "default", "default", "default")
                         labs_and_vitals["SodiumValue"] = sodiumLab["value"]
                         labs_and_vitals["SodiumDate"] = sodiumLab["date"]
                     if len(wbcList) > 0:
-                        wbcList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d')) 
+                        wbcList.sort(key = lambda lab: datetime.strptime(lab["date"], '%Y-%m-%d'))
                         wbcLab = wbcList[-1]
                         labs_and_vitals["WBC"] = getLabsAndVitalsRange(wbcLab["value"], 4, 11, "default", "default", "default")
                         labs_and_vitals["WBCValue"] = wbcLab["value"]
@@ -1210,16 +1210,16 @@ class Patient(Item):
                             }
 
                             if vital_type == "BMI":
-                                bmiList.append(vital)              
+                                bmiList.append(vital)
                             elif vital_type == "BP_DIAS":
                                 bp_DiastolicList.append(vital)
                             elif vital_type == "BP_SYS":
-                                bp_SystolicList.append(vital)    
-                    if len(bmiList) > 0:     
-                        bmiList.sort(key = lambda vital: datetime.strptime(vital["date"], '%Y-%m-%d')) 
+                                bp_SystolicList.append(vital)
+                    if len(bmiList) > 0:
+                        bmiList.sort(key = lambda vital: datetime.strptime(vital["date"], '%Y-%m-%d'))
                         bmiVital = bmiList[-1]
                         labs_and_vitals["BMIValue"] = bmiVital["value"]
-                        labs_and_vitals["BMIDate"] = bmiVital["date"] 
+                        labs_and_vitals["BMIDate"] = bmiVital["date"]
                         if bmiVital["value"] < 18.5:
                             labs_and_vitals["BMI"] = "Underweight (< 18.5)"
                         elif bmiVital["value"] < 25:
@@ -1229,17 +1229,17 @@ class Patient(Item):
                         else:
                             labs_and_vitals["BMI"] = "Obese (>= 30)"
                     if len(bp_SystolicList) > 0:
-                        bp_SystolicList.sort(key = lambda vital: datetime.strptime(vital["date"], '%Y-%m-%d')) 
-                        bp_SystolicVital = bp_SystolicList[-1] 
+                        bp_SystolicList.sort(key = lambda vital: datetime.strptime(vital["date"], '%Y-%m-%d'))
+                        bp_SystolicVital = bp_SystolicList[-1]
                         labs_and_vitals["BP_Systolic"] = getLabsAndVitalsRange(bp_SystolicVital["value"], 121, 140, 'Normal (< 121)', 'PreHypertension (121 >= and <140)', 'Hypertension (>= 140)')
                         labs_and_vitals["BP_SystolicValue"] = bp_SystolicVital["value"]
-                        labs_and_vitals["BP_SystolicDate"] = bp_SystolicVital["date"] 
+                        labs_and_vitals["BP_SystolicDate"] = bp_SystolicVital["date"]
                     if len(bp_DiastolicList) > 0:
-                        bp_DiastolicList.sort(key = lambda vital: datetime.strptime(vital["date"], '%Y-%m-%d')) 
-                        bp_DiastolicVital = bp_DiastolicList[-1]  
+                        bp_DiastolicList.sort(key = lambda vital: datetime.strptime(vital["date"], '%Y-%m-%d'))
+                        bp_DiastolicVital = bp_DiastolicList[-1]
                         labs_and_vitals["BP_Diastolic"] = getLabsAndVitalsRange(bp_DiastolicVital["value"], 81, 90, 'Normal (< 81)', 'PreHypertension (81 >= and < 90)', 'Hypertension (>= 90)')
                         labs_and_vitals["BP_DiastolicValue"] = bp_DiastolicVital["value"]
-                        labs_and_vitals["BP_DiastolicDate"] = bp_DiastolicVital["date"] 
+                        labs_and_vitals["BP_DiastolicDate"] = bp_DiastolicVital["date"]
 
         return labs_and_vitals
 
@@ -1298,7 +1298,7 @@ class Patient(Item):
                 if len(path_reports) > 0:
                     for path_report in path_reports:
                         path_report_obj = request.embed(path_report, '@@object')
-                        if path_report_obj['path_source_procedure'] == 'path_metasis':
+                        if path_report_obj['path_source_procedure'] == 'path_metastasis':
                             site = path_report_obj['metasis_details']['site']
                             if site == "Lung":
                                 site = "Lung and pleura"
@@ -1367,13 +1367,13 @@ class Patient(Item):
         if len(surgery) > 0:
             for surgery_record in surgery:
                 surgery_object = request.embed(surgery_record, '@@object')
-                surgery_procedures = surgery_object['surgery_procedure']                
+                surgery_procedures = surgery_object['surgery_procedure']
                 if len(surgery_procedures) > 0:
                     for surgery_procedure in surgery_procedures:
                         surgery_procedure_obj = request.embed(surgery_procedure, '@@object')
                         if surgery_procedure_obj['procedure_type'] == "Nephrectomy":
                             nephrectomy_dates.append(datetime.strptime(surgery_object['date'], '%Y-%m-%d'))
-                            
+
 
         #check imaging only if there is nephrectomy dates
         if len(nephrectomy_dates) > 0 and len(medical_imaging) > 0:
@@ -1390,7 +1390,7 @@ class Patient(Item):
                     if (nephrectomy_date - med_img_date).days <90 and (nephrectomy_date - med_img_date).days >= 0:
                         imaging_obj = {
                             "date": med_img_date_string,
-                            "type": imaging.get("type")                  
+                            "type": imaging.get("type")
                         }
                         if imaging.get("type") == "CT Abdomen":
                             ct_list.append(imaging_obj)
@@ -1412,8 +1412,8 @@ class Patient(Item):
                     pet_obj = pet_list[-1]
                     imagings.append(pet_obj)
                 if len(imagings)> 0:
-                    records = records + imagings        
-                        
+                    records = records + imagings
+
 
         return records
 
@@ -1662,6 +1662,37 @@ class Radiation(Item):
             return "15 and up"
 
 
+    @calculated_property(schema={
+        "title": "Radiation Site Consolidated",
+        "type": "string",
+        "enum": [
+                    "Adrenal",
+                    "Bone",
+                    "Brain",
+                    "Liver",
+                    "Lung",
+                    "Lymph node",
+                    "Other",
+                    "Kidney"
+                ],
+    })
+    def site_consolidated(self, request, site_general):
+
+        if site_general == "Adrenal gland, left" or site_general == "Adrenal gland, right":
+            return "Adrenal"
+        elif site_general == "Spine" or site_general == "Bone":
+            return "Bone"
+        elif site_general == "Brain" or site_general == "Liver":
+            return site_general
+        elif site_general == "Connective, subcutaneous and other soft tissues, NOS" or site_general == "Retroperitoneum & peritoneum" or site_general == "Connective, subcutaneous and other soft tissue, abdomen" or site_general == "Gastrointestine/ digestive system & spleen" or site_general == "Salivary gland":
+            return "Other"
+        elif site_general == "Lung, right" or site_general == "Lung, left" or site_general == "Lung":
+            return"Lung and pleura"
+        elif site_general == "Lymph node, NOS" or site_general == "Lymph node, intrathoracic" or site_general == "Lymph node, intra abdominal":
+            return "Lymph node"
+        else:
+            return "Kidney"
+
 
 
 @collection(
@@ -1729,4 +1760,3 @@ def patient_basic_view(context, request):
         except KeyError:
             pass
     return filtered
-

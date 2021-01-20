@@ -291,10 +291,8 @@ class Bioproject(BiofileSet, CalculatedFileSetAssay, CalculatedFileSetBiosample,
     schema = load_schema('encoded:schemas/bioproject.json')
     embedded = BiofileSet.embedded + [
         'files.biodataset',
-        # 'files.bioreplicate.biolibrary',
         'files.bioreplicate.biolibrary',
-        'files.biolibrary',
-
+        'files.bioreplicate',
         'files.bioreplicate.bioexperiment',
         'award',
         'lab'
