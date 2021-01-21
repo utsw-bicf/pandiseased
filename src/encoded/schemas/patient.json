@@ -262,6 +262,9 @@
         "biospecimen.anatomic_site": {
             "title": "Specimen Anatomic Site"
         },
+        "biospecimen.species": {
+            "title": "Specimen Species"
+        },
         "biospecimen.activity_status": {
             "title": "Specimen Activity Status"
         },

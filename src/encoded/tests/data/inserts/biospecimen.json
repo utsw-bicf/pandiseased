@@ -13,7 +13,7 @@
         "anatomic_site":"Kidney, NOS",
         "uuid": "29bf20ad-7942-44d3-9d89-53febc8829fc",
         "status": "released",
-        "species": "Human",
+        "species": "Mouse",
         "specimen_lineage": "New",
         "activity_status": "Active",
         "surgery": "KCESX708FIJ"

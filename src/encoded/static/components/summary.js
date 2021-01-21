@@ -14,6 +14,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHospitalUser } from "@fortawesome/free-solid-svg-icons";
 import { faVial } from "@fortawesome/free-solid-svg-icons";
 import { faDna } from "@fortawesome/free-solid-svg-icons";
+import { faDisease } from "@fortawesome/free-solid-svg-icons";
+
 
 /**
  * Generate an array of data from one facet bucket for displaying in a chart, with one array entry
@@ -168,48 +170,6 @@ SummaryStatusChart.contextTypes = {
     navigate: PropTypes.func,
 };
 
-// Render the horizontal facets.
-// Note: these facets are not necessarily horizontal, it depends on the screen width
-const SummaryHorizontalFacets = ({ context, facetList }, reactContext) => {
-    let horizFacets;
-    if (facetList === 'all') {
-        horizFacets = context.facets.filter(f => ['biosample_ontology.organ_slims', 'biosample_ontology.cell_slims', 'assay_title', 'date_released', 'date_submitted'].includes(f.field));
-    } else {
-        horizFacets = context.facets.filter(f => ['assay_title', 'biosample_ontology.term_name', 'date_released', 'date_submitted'].includes(f.field));
-    }
-
-    // Calculate the searchBase, which is the current search query string fragment that can have
-    // terms added to it.
-    const searchBase = `${url.parse(reactContext.location_href).search}&` || '?';
-
-    // Note: we subtract one from the horizontal facet length because "date-released" and "date-submitted" are collapsed into one facet
-    return (
-        <FacetList
-            context={context}
-            facets={horizFacets}
-            filters={context.filters}
-            searchBase={searchBase}
-            addClasses={`summary-horizontal-facets facet-num-${horizFacets.length - 1} ${facetList}`}
-            supressTitle
-            orientation="horizontal"
-            isExpandable={false}
-        />
-    );
-};
-
-SummaryHorizontalFacets.propTypes = {
-    context: PropTypes.object.isRequired, // Summary search result object
-    facetList: PropTypes.string,
-};
-
-SummaryHorizontalFacets.defaultProps = {
-    facetList: '',
-};
-
-SummaryHorizontalFacets.contextTypes = {
-    location_href: PropTypes.string, // Current URL
-    navigate: PropTypes.func, // encoded navigation
-};
 
 // Update all charts to resize themselves on print.
 const printHandler = () => {
@@ -337,21 +297,32 @@ class SummaryBody extends React.Component {
         const query = new QueryString(searchQuery);
         const nonPersistentQuery = query.clone();
         nonPersistentQuery.deleteKeyValue('?type');
-        const clearButton = nonPersistentQuery.queryCount() > 0 && query.queryCount('?type') > 0;
-        let numOfSamples = 0;
-        //find facet biospecimen.activity_status
+        let numOfKidneySamples = 0;
+        let numOfTumorgraftSample = 0
+
         let facets = context.facets;
-        let facet = facets.filter(obj => {
-            return obj.field === "biospecimen.activity_status"
+        let anatomic_site = facets.filter(obj => {
+            return obj.field === "biospecimen.anatomic_site"
           })
-        if (facet && facet.length > 0){
-            //find term active
-            let terms = facet[0].terms;
+        if (anatomic_site && anatomic_site.length > 0){
+            let terms = anatomic_site[0].terms;
             let result = terms.filter(obj => {
-                return obj.key === "Active"
+                return obj.key === "Kidney, NOS"
             })
             if (result && result.length > 0) {
-                numOfSamples = result[0].doc_count;
+                numOfKidneySamples = result[0].doc_count;
+            }
+        }
+        let species = facets.filter(obj => {
+            return obj.field === "biospecimen.species"
+          })
+        if (species && species.length > 0){
+            let terms = species[0].terms;
+            let result = terms.filter(obj => {
+                return obj.key === "Mouse"
+            })
+            if (result && result.length > 0) {
+                numOfTumorgraftSample = result[0].doc_count;
             }
         }
         
@@ -360,10 +331,11 @@ class SummaryBody extends React.Component {
             justifyContent: "space-between"
         };
         let totalLabelStyle ={
-            minWidth: "33.33%"
+            minWidth: "25%"
         };
         let numberStyle = {
-            fontSize: "80px"
+            fontSize: "80px",
+            minWidth: "50%"
         }
         let noteStyle = {
             fontSize: "20px"
@@ -380,22 +352,29 @@ class SummaryBody extends React.Component {
                         
                         <label style={totalLabelStyle}>
                             <ul style={{ listStyleType: "none" }}>
-                            <li><FontAwesomeIcon icon={faHospitalUser} size="4x" /><span>&nbsp;</span><span style={numberStyle}>{context.total}</span></li>
+                            <li><span style={numberStyle}>{context.total}</span><span>&nbsp;</span><span>&nbsp;</span><FontAwesomeIcon icon={faHospitalUser} size="4x" /></li>
                             <li><span style={noteStyle}>Patients</span></li>
                             </ul>
                         </label>
 
                         <label style={totalLabelStyle}>
                             <ul style={{ listStyleType: "none" }}>
-                            <li><FontAwesomeIcon icon={faVial} size="4x" /><span>&nbsp;</span><span style={numberStyle}>{numOfSamples}</span></li>
-                            <li><span style={noteStyle}>Patients with active samples</span></li>
+                            <li><span style={numberStyle}>{numOfKidneySamples}</span><span>&nbsp;</span><span>&nbsp;</span><FontAwesomeIcon icon={faVial} size="4x" /></li>
+                            <li><span style={noteStyle}>Patients with Primary Kidney Samples</span></li>
                             </ul>
                         </label>
 
                         <label style={totalLabelStyle}>
                             <ul style={{ listStyleType: "none" }}>
-                            <li><FontAwesomeIcon icon={faDna} size="4x" /><span>&nbsp;</span><span style={numberStyle}>0</span></li>
-                            <li><span style={noteStyle}>Patients with genomics data</span></li>
+                            <li><span style={numberStyle}>{numOfTumorgraftSample}</span><span>&nbsp;</span><span>&nbsp;</span><FontAwesomeIcon icon={faDisease} size="4x" /></li>
+                            <li><span style={noteStyle}>Patients with Tumorgraft Samples</span></li>
+                            </ul>
+                        </label>
+
+                        <label style={totalLabelStyle}>
+                            <ul style={{ listStyleType: "none" }}>
+                            <li><span style={numberStyle}>0</span><span>&nbsp;</span><span>&nbsp;</span><FontAwesomeIcon icon={faDna} size="4x" /></li>
+                            <li><span style={noteStyle}>Patients with Genomics Data</span></li>
                             </ul>
                         </label>
 
