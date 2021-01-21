@@ -10,7 +10,10 @@ import * as globals from './globals';
 import { FacetList, ClearFilters } from './search';
 import { getObjectStatuses, sessionToAccessLevel } from './status';
 import { ViewControls } from './view_controls';
-import BodyMap, { systemsField, organField } from './body_map';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHospitalUser } from "@fortawesome/free-solid-svg-icons";
+import { faVial } from "@fortawesome/free-solid-svg-icons";
+import { faDna } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * Generate an array of data from one facet bucket for displaying in a chart, with one array entry
@@ -38,17 +41,6 @@ function generateStatusData(buckets, labels) {
     return statusData;
 }
 
-// Data field for organism
-// We will display different facets depending on the selected organism
-const organismField = 'replicates.library.biosample.donor.organism.scientific_name';
-
-// Mapping of shortened organism name and full scientific organism name
-const organismTerms = [
-    'Homo sapiens',
-    'Mus musculus',
-    'Drosophila melanogaster',
-    'Caenorhabditis elegans',
-];
 
 // Column graph of experiment statuses.
 class SummaryStatusChart extends React.Component {
@@ -334,77 +326,84 @@ class SummaryBody extends React.Component {
         super(props);
         const searchQuery = url.parse(this.props.context['@id']).search;
         const terms = queryString.parse(searchQuery);
-        this.state = {
-            selectedOrganism: terms[organismField] ? terms[organismField] : [],
-        };
-        this.chooseOrganism = this.chooseOrganism.bind(this);
+
+
     }
 
-    chooseOrganism(e) {
-        this.setState({
-            selectedOrganism: e.currentTarget.id,
-        });
-        const parsedUrl = url.parse(this.props.context['@id']);
-        const query = new QueryString(parsedUrl.query);
-        query.deleteKeyValue(systemsField);
-        query.deleteKeyValue(organField);
-        query.replaceKeyValue(organismField, e.currentTarget.id, '');
-        const href = `?${query.format()}`;
-        this.context.navigate(href);
-    }
+
     render() {
+        const { context } = this.props;
         const searchQuery = url.parse(this.props.context['@id']).search;
         const query = new QueryString(searchQuery);
         const nonPersistentQuery = query.clone();
         nonPersistentQuery.deleteKeyValue('?type');
         const clearButton = nonPersistentQuery.queryCount() > 0 && query.queryCount('?type') > 0;
+        let numOfSamples = 0;
+        //find facet biospecimen.activity_status
+        let facets = context.facets;
+        let facet = facets.filter(obj => {
+            return obj.field === "biospecimen.activity_status"
+          })
+        if (facet && facet.length > 0){
+            //find term active
+            let terms = facet[0].terms;
+            let result = terms.filter(obj => {
+                return obj.key === "Active"
+            })
+            if (result && result.length > 0) {
+                numOfSamples = result[0].doc_count;
+            }
+        }
+        
+        let totalContainerStyle = {
+            display: "flex",
+            justifyContent: "space-between"
+        };
+        let totalLabelStyle ={
+            minWidth: "33.33%"
+        };
+        let numberStyle = {
+            fontSize: "80px"
+        }
+        let noteStyle = {
+            fontSize: "20px"
+        }
         return (
             <div className="summary-header">
                 <div className="summary-header__title_control">
                     <div className="summary-header__title">
                         <h1>{this.props.context.title}</h1>
                     </div>
-                    <ClearFilters searchUri={this.props.context.clear_filters} enableDisplay={!!clearButton} />
                 </div>
                 <div className="summary-controls">
-                    <div className="organism-button-instructions">Choose an organism:</div>
-                    <div className="organism-button-container">
-                        {organismTerms.map(term =>
-                            <button
-                                id={term}
-                                onClick={e => this.chooseOrganism(e)}
-                                className={`organism-button ${term.replace(' ', '-')} ${this.state.selectedOrganism === term ? 'active' : ''}`}
-                                key={term}
-                            >
-                                <img src={`/static/img/bodyMap/organisms/${term.replace(' ', '-')}.png`} alt={term} />
-                                <span>{term}</span>
-                            </button>
-                        )}
+                    <div style={totalContainerStyle}>
+                        
+                        <label style={totalLabelStyle}>
+                            <ul style={{ listStyleType: "none" }}>
+                            <li><FontAwesomeIcon icon={faHospitalUser} size="4x" /><span>&nbsp;</span><span style={numberStyle}>{context.total}</span></li>
+                            <li><span style={noteStyle}>Patients</span></li>
+                            </ul>
+                        </label>
+
+                        <label style={totalLabelStyle}>
+                            <ul style={{ listStyleType: "none" }}>
+                            <li><FontAwesomeIcon icon={faVial} size="4x" /><span>&nbsp;</span><span style={numberStyle}>{numOfSamples}</span></li>
+                            <li><span style={noteStyle}>Patients with active samples</span></li>
+                            </ul>
+                        </label>
+
+                        <label style={totalLabelStyle}>
+                            <ul style={{ listStyleType: "none" }}>
+                            <li><FontAwesomeIcon icon={faDna} size="4x" /><span>&nbsp;</span><span style={numberStyle}>0</span></li>
+                            <li><span style={noteStyle}>Patients with genomics data</span></li>
+                            </ul>
+                        </label>
+
+
+                        
                     </div>
-                    <div className={`results-controls ${this.state.selectedOrganism.length > 0 ? `${this.state.selectedOrganism.replace(' ', '-')}` : ''}`}>
-                        <div className="results-count">There {this.props.context.total > 1 ? 'are' : 'is'} <b className="bold-total">{this.props.context.total}</b> result{this.props.context.total > 1 ? 's' : ''}.</div>
-                        <div className="view-controls-container">
-                            <ViewControls results={this.props.context} alternativeNames={['Search list', 'Tabular report', 'Summary matrix']} />
-                        </div>
-                    </div>
-                    {(this.state.selectedOrganism === 'Homo sapiens') ?
-                        <React.Fragment>
-                            <div className="flex-container">
-                                <BodyMap context={this.props.context} />
-                                <SummaryData context={this.props.context} displayCharts={'donuts'} />
-                            </div>
-                            <div className="summary-content">
-                                <SummaryData context={this.props.context} displayCharts={'area'} />
-                            </div>
-                        </React.Fragment>
-                    :
-                        <React.Fragment>
-                            <SummaryHorizontalFacets context={this.props.context} facetList={'all'} />
-                            <div className="summary-content">
-                                <SummaryData context={this.props.context} displayCharts={'all'} />
-                            </div>
-                        </React.Fragment>
-                    }
+
+
                 </div>
             </div>
         );
@@ -437,44 +436,9 @@ const Summary = (props) => {
                         <div className="search-results__report-list">
                             <h4>Showing results</h4>
                             <div className="results-table-control">
-                                <dl className="key-value">
-                                    <div data-test="clear_filters">
-                                        <dt>clear_filters</dt>
-                                        <dd>{context.clear_filters}</dd>
-                                    </div>
-                                    <div data-test="search_base">
-                                        <dt>search_base</dt>
-                                        <dd>{context.search_base}</dd>
-                                    </div>
-                                    <div data-test="total">
-                                        <dt>total</dt>
-                                        <dd>{context.total}</dd>
-                                    </div>
-                                    <div data-test="filters.length">
-                                        <dt>filters.length</dt>
-                                        <dd>{context.filters.length}</dd>
-                                    </div>
-                                    <div data-test="matrix.x.group_by">
-                                        <dt>matrix.x.group_by</dt>
-                                        <dd>{context.matrix.x.group_by}</dd>
-                                    </div>
-                                    <div data-test="matrix.x.doc_count">
-                                        <dt>matrix.x.doc_count</dt>
-                                        <dd>{context.matrix.x.doc_count}</dd>
-                                    </div>
-                                    <div data-test="matrix.y.group_by">
-                                        <dt>matrix.y.group_by</dt>
-                                        <dd>{context.matrix.y.group_by}</dd>
-                                    </div>
-                                    <div data-test="matrix.y.doc_count">
-                                        <dt>matrix.y.doc_count</dt>
-                                        <dd>{context.matrix.y.doc_count}</dd>
-                                    </div>
-                                </dl>
-                                                        
                                 <div className="results-table-control__main">
                                     <ViewControls results={context} />
-                                </div>
+                                </div>  
                             </div>
                             <SummaryBody context={context} />
 
