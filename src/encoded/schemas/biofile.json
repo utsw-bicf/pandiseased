@@ -495,7 +495,10 @@
                         "tsv",
                         "vcf",
                         "idx",
-                        "txt"
+                        "txt",
+                        "bigBed",
+                        "bigWig",
+                        "hic"
                     ]
                 }
             ]
@@ -665,6 +668,25 @@
                 "None"
                 ]
         },
+        "mapped_run_type": {
+            "title": "Mapped run type for bam files",
+            "description": "The mapped run type of the alignment file which may differ from the fastqs it is derived from.",
+            "comment": "When the control and experiment run types do not match, one may be changed in order to meet pipeline requirements.",
+            "permission": "import_items",
+            "type": "string",
+            "enum": [
+                "single-ended",
+                "paired-ended"
+            ]
+        },
+        "external_accession": {
+            "title": "External accession",
+            "description": "For files that were not accessioned at our site but have an accession elsewhere.",
+            "comment": "Do not submit. Only admins are allowed to set or update this value.",
+            "type": "string",
+            "permission": "import_items",
+            "uniqueKey": "accession"
+        },
         "status": {
             "title": "Status",
             "type": "string",
@@ -729,13 +751,18 @@
         "output_type": {
             "title": "Output type"
         },
+        "output_category": {
+            "title": "Output category"
+        },
         "paired_end": {
             "title": "Paired end identifier"
         },
         "paired_with": {
             "title": "Paired with"
         },
-
+        "href": {
+            "title": "Download URL"
+        },
         "date_created": {
             "title": "Date created"
         },
