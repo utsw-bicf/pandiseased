@@ -806,7 +806,7 @@ class RawFileTable extends React.Component {
     render() {
         const { files, meta, showReplicateNumber } = this.props;
         const { loggedIn, adminUser, isAuthorized } = meta;
-        
+
 // console.log("rawfiles",files);
         if (files && files.length > 0) {
             // Group all files by their library accessions. Any files without replicates or

@@ -35,11 +35,12 @@ import logging
 import json
 import pytz
 import time
-
 from encoded.upload_credentials import UploadCredentials
 from snovault.util import ensure_list_and_filter_none
 from snovault.util import take_one_or_return_none
 from snovault.util import try_to_get_field_from_item_with_skip_calculated_first
+
+
 
 @collection(
     name='biofiles',
@@ -54,6 +55,7 @@ class Biofile(Item):
     name_key = 'accession'
     rev = {
         'paired_with': ('Biofile', 'paired_with'),
+        # 'bioquality_metrics': ('BioqualityMetric', 'bioquality_metric_of'),
         'superseded_by': ('Biofile', 'supersedes'),
     }
     embedded = [
@@ -64,11 +66,25 @@ class Biofile(Item):
         'bioreplicate.biolibrary',
         'submitted_by',
         'biolibrary',
+        # 'bioquality_metrics',
+        # 'analysis_step_version.analysis_step',
+        # 'analysis_step_version.analysis_step.pipelines',
+        # 'analysis_step_version.software_versions',
+        # 'analysis_step_version.software_versions.software',
+
     ]
     audit_inherit = [
+        # 'analysis_step_version.analysis_step',
+        # 'analysis_step_version.analysis_step.pipelines',
+        # 'analysis_step_version.analysis_step.versions',
+        # 'analysis_step_version.software_versions',
+        # 'analysis_step_version.software_versions.software'
     ]
     set_status_up = [
+        # 'bioquality_metrics',
         'platform',
+
+
 
     ]
     set_status_down = []
@@ -339,3 +355,4 @@ class Biofile(Item):
     #         'md5sum_base64': base64.b64encode(bytes.fromhex(md5sum)).decode("utf-8"),
     #         'file_size': file_size
     #     }
+        
