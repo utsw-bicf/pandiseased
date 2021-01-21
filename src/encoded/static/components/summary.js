@@ -15,6 +15,7 @@ import { faHospitalUser } from "@fortawesome/free-solid-svg-icons";
 import { faVial } from "@fortawesome/free-solid-svg-icons";
 import { faDna } from "@fortawesome/free-solid-svg-icons";
 import { faDisease } from "@fortawesome/free-solid-svg-icons";
+import SummaryChart from "./summaryChart";
 
 
 /**
@@ -381,7 +382,7 @@ class SummaryBody extends React.Component {
 
                         
                     </div>
-
+                    <SummaryChart chartId="summaryChart" data={context} ></SummaryChart>
 
                 </div>
             </div>
