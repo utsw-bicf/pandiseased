@@ -171,6 +171,7 @@ class ViewControl {
         }
         if (resultType == "Patient") {
             defaultViewControlTypes.types.push(ViewControlTypes.MATRIX);
+            defaultViewControlTypes.types.push(ViewControlTypes.REPORT);
         }
         return defaultViewControlTypes;
     }
