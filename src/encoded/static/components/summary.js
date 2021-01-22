@@ -407,6 +407,12 @@ const Summary = (props) => {
 
     if (context.total) {
         return (
+            <div>
+            <header className="row">
+            <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+            <script src="https://unpkg.com/axios@0.18.0/dist/axios.min.js" ></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" ></script>
+            </header>
             <Panel addClasses={itemClass}>
                 <PanelBody>
                     <div className="search-results">
@@ -426,7 +432,7 @@ const Summary = (props) => {
                     </div>
                 </PanelBody>
             </Panel>
-
+            </div>
         );
     }
     return <h4>No results found</h4>;
