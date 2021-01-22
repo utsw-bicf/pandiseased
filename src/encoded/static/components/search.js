@@ -237,8 +237,12 @@ class PatientComponent extends React.Component {
                         <div className="result-item__meta-id">{` ${result.accession}`}</div>
                         <Status item={result.status} badgeSize="small" css="result-table__status" />
                         {this.props.auditIndicators(result.audit, result['@id'], { session: this.context.session, search: true })}
-
                     </div>
+                    {cartControls ?
+                        <div className="result-item__cart-control">
+                            <CartToggle element={result} />
+                        </div>
+                    : null}
                     <PickerActions {...this.props} />
                 </div>
                 {this.props.auditDetail(result.audit, result['@id'], { session: this.context.session, except: result['@id'], forcedEditLink: true })}
@@ -289,7 +293,7 @@ class PathologyComponent extends React.Component {
                         <Status item={result.status} badgeSize="small" css="result-table__status" />
                         {this.props.auditIndicators(result.audit, result['@id'], { session: this.context.session, search: true })}
                     </div>
-                    <PickerActions {...this.props} />    
+                    <PickerActions {...this.props} />
                 </div>
                 {this.props.auditDetail(result.audit, result['@id'], { session: this.context.session, except: result['@id'], forcedEditLink: true })}
             </li>
@@ -411,6 +415,7 @@ globals.listingViews.register(Biofile, 'Biofile');
 /* eslint-disable react/prefer-stateless-function */
 class BiospecimenComponent extends React.Component {
     render() {
+       const { cartControls } = this.props;
         const result = this.props.context;
         const tissueType = (result.tissue_type && result.sample_type == 'Tissue') ? ` ${result.tissue_type}` : '';
         const anatomicSite = (result.anatomic_site && result.sample_type == 'Tissue') ? ` ${result.anatomic_site}` : '';
@@ -434,10 +439,9 @@ class BiospecimenComponent extends React.Component {
                         <div className="result-item__meta-id">{` ${result.accession}`}</div>
                         <Status item={result.status} badgeSize="small" css="result-table__status" />
                         {this.props.auditIndicators(result.audit, result['@id'], { session: this.context.session, search: true })}
-
                     </div>
                     <PickerActions {...this.props} />
-                    
+
                 </div>
                 {this.props.auditDetail(result.audit, result['@id'], { session: this.context.session, except: result['@id'], forcedEditLink: true })}
             </li>
@@ -449,6 +453,7 @@ class BiospecimenComponent extends React.Component {
 
 BiospecimenComponent.propTypes = {
     context: PropTypes.object.isRequired, // Biosample search results
+    cartControls: PropTypes.bool, // True if displayed in active cart
     auditIndicators: PropTypes.func.isRequired, // Audit decorator function
     auditDetail: PropTypes.func.isRequired, // Audit decorator function
 };
@@ -514,11 +519,6 @@ const BioexperimentComponent = (props, reactContext) => {
                     <Status item={result.status} badgeSize="small" css="result-table__status" />
                     {props.auditIndicators(result.audit, result['@id'], { session: reactContext.session, search: true })}
                 </div>
-                {cartControls ?
-                    <div className="result-item__cart-control">
-                        <CartToggle element={result} />
-                    </div>
-                : null}
                 <PickerActions {...props} />
             </div>
             { props.auditDetail(result.audit, result['@id'], { session: reactContext.session, except: result['@id'], forcedEditLink: true }) }
@@ -551,7 +551,6 @@ const BiodatasetComponent = (props, reactContext) => {
 
     // Determine whether the dataset is a series or not
     const seriesDataset = result['@type'].indexOf('Bioseries') >= 0;
-console.log("seriesDataset", seriesDataset);
     // Get the biosample info for Series types if any. Can be string or array. If array, only use iff 1 term name exists
     if (seriesDataset) {
         biosampleTerm = (result.assay_term_name) ? result.assay_term_name : '';
@@ -562,7 +561,6 @@ console.log("seriesDataset", seriesDataset);
 
     const haveSeries = result['@type'].indexOf('Bioseries') >= 0;
     const haveFileSet = result['@type'].indexOf('BiofileSet') >= 0;
-    console.log("haveSeries", result['@type'].indexOf('Bioseries'));
 
     return (
         <li className={resultItemClass(result)}>
@@ -921,7 +919,6 @@ export const SearchControls = ({ context, visualizeDisabledTitle, showResultsTog
     const searchBase = url.parse(reactContext.location_href).search || '';
     let trimmedSearchBase = ''
     if (searchBase.indexOf("&limit=") !== -1 || searchBase.indexOf("?limit=") !== -1 ) {
-        console.log("has limit")
         if (searchBase.indexOf("limit=all") !== -1) {
             trimmedSearchBase =searchBase.replace(/[?|&]limit=all/, '')
         } else {
@@ -1228,5 +1225,3 @@ Search.lastRegion = {
 };
 
 globals.contentViews.register(Search, 'Search');
-
-

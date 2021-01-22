@@ -30,7 +30,7 @@ class CartToggleComponent extends React.Component {
         const inCart = elements.indexOf(elementAtId) > -1;
         const cartName = (savedCartObj && Object.keys(savedCartObj).length > 0 ? savedCartObj.name : '');
         const cartAtLimit = !loggedIn && elements.length >= CART_MAXIMUM_ELEMENTS_LOGGEDOUT;
-        const inCartToolTip = `${inCart ? 'Remove patient from cohort' : 'Add patient from cohort'}${cartName ? `: ${cartName}` : ''}`;
+        const inCartToolTip = `${inCart ? 'Remove patient from cohort' : 'Add patient to cohort'}${cartName ? `: ${cartName}` : ''}`;
         const inProgressToolTip = inProgress ? 'Cohort operation in progress' : '';
         const cartAtLimitToolTip = cartAtLimit ? `Cohort can contain a maximum of ${CART_MAXIMUM_ELEMENTS_LOGGEDOUT} items` : '';
         const locked = savedCartObj && Object.keys(savedCartObj).length > 0 ? savedCartObj.locked : false;

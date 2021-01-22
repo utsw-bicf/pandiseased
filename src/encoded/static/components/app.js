@@ -41,10 +41,9 @@ const portal = {
             title: 'Data',
             children: [
                 { id: 'patientsearch', title: 'Patient Search', url: '/search/?type=Patient&status=released' },
+                { id: 'Surgerysearch', title: 'Surgery/Pathreports Search', url: '/search/?type=Surgery&status=released' },
                 { id: 'samplesearch', title: 'Biospecimen Search', url: '/search/?type=Biospecimen&status=released' },
                 { id: 'bioexperimentsearch', title: 'Bioexperiment Search', url: '/search/?type=Bioexperiment&status=released' },
-                // { id: 'biodatasetsearch', title: 'Biodataset Search', url: '/search/?type=Biodataset&status=released' },
-                { id: 'Surgerysearch', title: 'Surgery/Pathreports Search', url: '/search/?type=Surgery&status=released' },
                 { id: 'sep-mm-1' },
                 { id: 'patientmatrix', title: 'Patient Matrix', url: '/matrix/?type=Patient&status=released' },
                 { id: 'sampletmatrix', title: 'Biospecimen Matrix', url: '/matrix/?type=Biospecimen&status=released' },

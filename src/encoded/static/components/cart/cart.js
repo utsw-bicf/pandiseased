@@ -129,7 +129,7 @@ class CartSearchResults extends React.Component {
 
     render() {
         if (this.state.elementsForDisplay && this.state.elementsForDisplay.length === 0) {
-            return <div className="nav result-table cart__empty-message">No visible datasets on this page.</div>;
+            return <div className="nav result-table cart__empty-message">No visible patients on this page.</div>;
         }
         return <ResultTableList results={this.state.elementsForDisplay || []} cartControls={this.props.cartControls} mode="cart-view" />;
     }
@@ -907,8 +907,12 @@ const CartTools = ({ elements, selectedTerms, savedCartObj, viewableDatasets, fi
             />
         : null}
         {cartType === 'OBJECT' ? <CartMergeShared sharedCartObj={sharedCart} viewableDatasets={viewableDatasets} /> : null}
-        {cartType === 'ACTIVE' ? <CartLockTrigger savedCartObj={savedCartObj} inProgress={inProgress} /> : null}
-        {cartType === 'ACTIVE' || cartType === 'MEMORY' ? <CartClearButton /> : null}
+        {cartType === 'ACTIVE' ?
+            <div className="cart-tools-extras">
+                <CartLockTrigger savedCartObj={savedCartObj} inProgress={inProgress} />
+                <CartClearButton />
+            </div>
+        : null}
         <CartDatasetSearch elements={elements} />
     </div>
 );
@@ -1397,11 +1401,11 @@ const CartComponent = ({ context, elements, savedCartObj, loggedIn, inProgress, 
     // Array of dataset @ids the user has access to view; subset of `datasets`; shared carts only.
     const [viewableDatasets, setViewableDatasets] = React.useState(null);
     // Currently displayed page number for each tab panes; for pagers.
-    const [pageNumbers, dispatchPageNumbers] = React.useReducer(reducerTabPanePageNumber, { datasets: 0, browser: 0, processeddata: 0, rawdata: 0 });
+    const [pageNumbers, dispatchPageNumbers] = React.useReducer(reducerTabPanePageNumber, { patients: 0, browser: 0, processeddata: 0, rawdata: 0 });
     // Total number of displayed pages for each tab pane; for pagers.
-    const [totalPageCount, dispatchTotalPageCounts] = React.useReducer(reducerTabPaneTotalPageCount, { datasets: 0, browser: 0, processeddata: 0, rawdata: 0 });
+    const [totalPageCount, dispatchTotalPageCounts] = React.useReducer(reducerTabPaneTotalPageCount, { patients: 0, browser: 0, processeddata: 0, rawdata: 0 });
     // Currently displayed tab; match key of first TabPanelPane initially.
-    const [displayedTab, setDisplayedTab] = React.useState('datasets');
+    const [displayedTab, setDisplayedTab] = React.useState('patients');
     // All currently selected partial file objects, visualizable or not.
     const [selectedFiles, setSelectedFiles] = React.useState([]);
     // All currently selected visualizable partial file objects.
@@ -1531,7 +1535,7 @@ const CartComponent = ({ context, elements, savedCartObj, loggedIn, inProgress, 
         if (pageNumbers.rawdata >= rawdataPageCount) {
             dispatchPageNumbers({ tab: 'rawdata', pageNumber: 0 });
         }
-    }, [cartPatients, selectedVisualizableFiles, selectedFiles, rawdataFiles, pageNumbers.datasets, pageNumbers.browser, pageNumbers.processeddata, pageNumbers.rawdata]);
+    }, [cartPatients, selectedVisualizableFiles, selectedFiles, rawdataFiles, pageNumbers.patients, pageNumbers.browser, pageNumbers.processeddata, pageNumbers.rawdata]);
 
     return (
         <div className={itemClass(context, 'view-item')}>

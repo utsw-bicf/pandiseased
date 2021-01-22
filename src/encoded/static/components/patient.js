@@ -165,7 +165,7 @@ class Patient extends React.Component {
           <div className="col-sm-12">
             <Breadcrumbs root="/search/?type=Patient" crumbs={crumbs} crumbsReleased={crumbsReleased} />
             <div className="cart__toggle--header">
-              <CartToggle element={context} />
+                <CartToggle element={context} />
             </div>
             <h2>{context.accession}</h2>
             <ItemAccessories item={context}/>

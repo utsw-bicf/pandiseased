@@ -83,7 +83,6 @@ class Biospecimen extends React.Component {
                     <div className="col-sm-12">
                         <Breadcrumbs root="/search/?type=Biospecimen" crumbs={crumbs} crumbsReleased={crumbsReleased} />
                         <h2>{context.accession}</h2>
-                        <ItemAccessories item={context}/>
                     </div>
 
                 </header>
