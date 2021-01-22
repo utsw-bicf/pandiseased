@@ -57,9 +57,10 @@ class SummaryChart extends React.Component {
 
     componentDidMount() {
         this.plotly = window.Plotly;
-        this.moment = window.moment;
+
         this.drawChart();
     }
 }
 
 export default SummaryChart;
+
