@@ -106,6 +106,5 @@ export let tooltips = {
     "Specimen Lineage": "Parent vs derived sample. New is parent sample. Derived is the sample derived from another sample.Aliquot is an aliquot of a sample.",
     "Specimen Pathological Type": "Normal sample is Non-Malignant. Tumor sample is Malignant, which can be primary or metastatic.",
     "Specimen Activity Status": "Whether this sample is still available. Active is for available samples. Closed is for unavailable samples. Disabled is for revoked samples."
-    
-};
 
+};

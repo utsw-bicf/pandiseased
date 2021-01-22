@@ -4,14 +4,14 @@
     "id": "/profiles/biospecimen.json",
     "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
-    "required": [ "award", 
-        "specimen_label", 
-        "openspecimen_id", 
-        "patient", 
-        "sample_type", 
-        "collection_date", 
-        "specimen_lineage", 
-        "tissue_derivatives", 
+    "required": [ "award",
+        "specimen_label",
+        "openspecimen_id",
+        "patient",
+        "sample_type",
+        "collection_date",
+        "specimen_lineage",
+        "tissue_derivatives",
         "completion_date",
         "tissue_type",
         "anatomic_site",
@@ -107,7 +107,7 @@
                 "PBMC",
                 "Buffy Coat",
                 "Whole Blood"
-                
+
             ]
         },
         "completion_date" : {
@@ -546,4 +546,3 @@
     },
     "changelog": "/profiles/changelogs/biospecimen.md"
 }
-

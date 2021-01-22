@@ -355,7 +355,7 @@ class PathologyReportTable extends React.Component {
                                             {this.filteredData[i].positive_lymph_nodes>=0 && <div data-test="positive_lymph_nodes">
                                                 <dt>Positive Lymph Nodes</dt>
                                                 <dd>{this.filteredData[i].positive_lymph_nodes}</dd>
-                                                
+
                                             </div>}
 
 
@@ -413,7 +413,7 @@ class PathologyReportTable extends React.Component {
 
 
     render() {
-        
+
         return (
             <div className="flex-container" >
 
@@ -428,4 +428,3 @@ class PathologyReportTable extends React.Component {
 
 }
 export default PathologyReportTable;
-

@@ -1145,7 +1145,7 @@ class App extends React.Component {
                     <link rel="canonical" href={canonical} />
                     <link href="https://fonts.googleapis.com/css2?family=Mada:wght@200;400;500;600;700&family=Oswald:wght@200;300;400;500&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet" />
                     <script async src="//www.google-analytics.com/analytics.js" />
-                    
+
                     {this.props.inline ? <script data-prop-name="inline" dangerouslySetInnerHTML={{ __html: this.props.inline }} /> : null}
                     {this.props.styles ? <link rel="stylesheet" href={this.props.styles} /> : null}
                     {newsHead(this.props, `${hrefUrl.protocol}//${hrefUrl.host}`)}
@@ -1245,4 +1245,3 @@ module.exports.getRenderedProps = function getRenderedProps(document) {
     }
     return props;
 };
-

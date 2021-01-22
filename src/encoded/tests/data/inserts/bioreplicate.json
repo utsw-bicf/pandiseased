@@ -38,5 +38,20 @@
         "technical_replicate_number": 1,
         "status": "released",
         "uuid": "2fd08d63-cb83-421a-8454-a9505da559c4"
+    },
+    {
+        "bioexperiment": "KCEBE000BJW",
+        "biological_replicate_number": 1,
+        "biolibrary": "KCELB987FAA",
+        "technical_replicate_number": 1,
+        "status": "released",
+        "uuid": "d667fe93-c86a-4293-86ca-feba95176d0c"
+    },{
+        "bioexperiment": "KCEBE000BJX",
+        "biological_replicate_number": 2,
+        "biolibrary": "KCELB987GAA",
+        "technical_replicate_number": 1,
+        "status": "released",
+        "uuid": "71c692e5-3161-4f38-acb7-fc3d1f64003f"
     }
 ]
