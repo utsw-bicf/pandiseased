@@ -59,6 +59,19 @@
                 "linkTo": "Biodataset"
             }
         },
+        "related_files": {
+            "title": "Additional data files",
+            "description": "To be removed in a future release after data cleanup.",
+            "type": "array",
+            "default": [],
+            "permission": "import_items",
+            "items": {
+                "title": "Data file",
+                "comment": "See biofile.json for available identifiers.",
+                "type": "string",
+                "linkTo": "Biofile"
+            }
+        },
         "supersedes": {
             "title": "Supersedes",
             "description": "The experiment(s) that this experiment supersedes by virtue of being newer, better etc. than the one(s) it supersedes.",

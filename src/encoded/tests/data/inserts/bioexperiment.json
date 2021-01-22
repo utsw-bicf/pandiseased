@@ -73,5 +73,49 @@
     "aliases": [
       "james-brugarolas:experiment_RB884_681_1"
     ]
+  },
+  {
+    "accession": "KCEBE000BJW",
+    "assay_term_name": "whole genome sequencing assay",
+    "award": "Kidney-SPORE",
+    "lab": "sherman-weissman",
+    "experiment_description": "CH12 Control Histone Mods by ChIP-seq performed by Yale",
+    "date_submitted": "2015-01-02",
+    "date_released": "2015-01-10",
+    "status": "released",
+    "submitted_by": "amet.fusce@est.fermentum",
+    "uuid": "0607bd54-3beb-4b40-93a3-048e886be4f1",
+    "dbxrefs": [
+      "GEO:GSM798327",
+      "GEO:GSE32218"
+    ],
+    "references": [
+      "5a4ffbb9-2a6f-4620-8196-7bfb1b441051"
+    ],
+    "aliases": [
+      "james-brugarolas:experiment_RB884_681_2"
+    ]
+  },
+  {
+    "accession": "KCEBE000BJX",
+    "assay_term_name": "whole genome sequencing assay",
+    "award": "Kidney-SPORE",
+    "lab": "sherman-weissman",
+    "experiment_description": "CH12 Control Histone Mods by ChIP-seq performed by Yale",
+    "date_submitted": "2015-01-02",
+    "date_released": "2015-01-10",
+    "status": "released",
+    "submitted_by": "amet.fusce@est.fermentum",
+    "uuid": "aa16f84d-281e-4247-9d9e-31ce8c2ef9d4",
+    "dbxrefs": [
+      "GEO:GSM798327",
+      "GEO:GSE32218"
+    ],
+    "references": [
+      "5a4ffbb9-2a6f-4620-8196-7bfb1b441051"
+    ],
+    "aliases": [
+      "james-brugarolas:experiment_RB884_681_3"
+    ]
   }
 ]

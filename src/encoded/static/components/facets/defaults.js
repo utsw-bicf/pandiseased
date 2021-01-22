@@ -877,7 +877,7 @@ const FacetTerms = React.memo(({ facet, results, mode, relevantFilters, pathname
     if (facet.field.includes("pathology_report.t_stage") || facet.field.includes("surgery.pathology_report.n_stage") || facet.field.includes("surgery.pathology_report.m_stage") || facet.field.includes("surgery.pathology_report.ajcc_tnm_stage")){
         filteredTerms = sortStageTerms(filteredTerms);
     }
-    if (facet.field === "diagnosis.age_range" || facet.field === "diagnosis.follow_up_duration_range" || facet.field.includes("pathology_report.pathology_report_tumor_range") 
+    if (facet.field === "diagnosis.age_range" || facet.field === "diagnosis.follow_up_duration_range" || facet.field.includes("pathology_report.pathology_report_tumor_range")
         || facet.field === "medication_range" || facet.field === "radiation.dose_range" || facet.field === "radiation.fractions_range"
         || facet.field.includes("pathology_report.grade" || facet.field.includes("pathology_report.ajcc_version"))){
         filteredTerms = sortTermsNumeric(filteredTerms);
@@ -1130,7 +1130,7 @@ function sortTermsNumeric (filteredTerms) {
             }else if (a.key.toLowerCase() === "not applicable") {
                 aValue = 1001;
             }
-            
+
         }
         if (isNaN(bValue)) {
             if (b.key.toLowerCase() === "not available" ||b.key.toLowerCase() === "unknown" ) {
@@ -1138,18 +1138,18 @@ function sortTermsNumeric (filteredTerms) {
             }else if (b.key.toLowerCase() === "not applicable") {
                 bValue = 1001;
             }
-            
+
         }
         return aValue - bValue;
       });
-    return filteredTerms;              
+    return filteredTerms;
 }
 
 function sortTermsAlphabetical (filteredTerms) {
     filteredTerms.sort(function(a, b) {
         return a.key.localeCompare(b.key);
     });
-    return filteredTerms;             
+    return filteredTerms;
 }
 
 function sortStageTerms (filteredTerms) {
@@ -1158,7 +1158,7 @@ function sortStageTerms (filteredTerms) {
             return -1;
         }else if (b.key.toLowerCase() === 'pnx'){
             return 1;
-        
+
         }else if (a.key.toLowerCase() === "not available" || a.key.toLowerCase() === "not applicable"){
 
             if (b.key.toLowerCase() === "not available" || b.key.toLowerCase() === "not applicable"){
@@ -1173,9 +1173,7 @@ function sortStageTerms (filteredTerms) {
 
             return a.key.localeCompare(b.key);
         }
-        
+
     });
-    return filteredTerms;             
+    return filteredTerms;
 }
-
-

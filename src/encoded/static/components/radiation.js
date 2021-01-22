@@ -172,8 +172,8 @@ let diagnosisDate;
 let minX =new Date(this.props.first_treatment_date + ' 00:00:00');
 if (this.props.diagnosis_date != "Not available") {
   diagnosisDate = new Date(this.props.diagnosis_date + ' 00:00:00' );
-  
-} 
+
+}
 let deceasedDate;
 let lastFollowUpDate;
 let maxX;
@@ -324,4 +324,3 @@ this.plotly.newPlot(this.props.chartId, data, layout, this.plotlyConfig);
 }
 
 export default Radiation;
-

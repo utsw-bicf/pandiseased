@@ -11,7 +11,9 @@ import { auditDecor } from './audit';
 import { DocumentsPanelReq } from './doc';
 import { DbxrefList } from './dbxref';
 import { FetchedItems } from './fetched';
-import { FileGallery } from './filegallery';
+// import { FileGallery } from './filegallery';
+import { FileGallery1 } from './filegallery1';
+import { CartToggle } from './cart';
 import { ProjectBadge } from './image';
 import { CartToggle } from './cart';
 import { singleTreatment, ItemAccessories, DisplayAsJson, InternalTags } from './objectutils';
@@ -529,10 +531,10 @@ class Bioexperiment extends React.Component {
 
                     </PanelBody>
                 </Panel>
-
-                {<BioreplicateTable data={context.bioreplicate} tableTitle={"Bioreplicates summary"+"("+context.replication_type+")"}></BioreplicateTable>}
+                {<BioreplicateTable data={context.bioreplicate} tableTitle="Bioreplicates summary"></BioreplicateTable>}
                 {/* Display the file widget with the facet, graph, and tables */}
-                <FileGallery context={context} encodevers={encodevers} anisogenic={anisogenic} />
+                {/* <FileGallery context={context} encodevers={encodevers} anisogenic={anisogenic} /> */}
+                <FileGallery1 context={context} encodevers={encodevers} anisogenic={anisogenic} />
 
                 <FetchedItems {...this.props} url={experimentsUrl} Component={ControllingExperiments} />
                 {combinedDocuments.length ?

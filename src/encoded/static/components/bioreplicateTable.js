@@ -20,7 +20,6 @@ class BioreplicateTable extends React.Component {
             "Biospecimen_id":i.biolibrary.biospecimen['@id'],
             "Biolibrary": i.biolibrary.accession,
             "Biolibrary_id":i.biolibrary['@id'],
-
             "Patient": i.biolibrary.biospecimen.patient
 
         }));
@@ -49,12 +48,10 @@ class BioreplicateTable extends React.Component {
                 "Biolibrary": {
                     title: 'Biolibrary',
                     display:bioreplicateFilters => <a href={bioreplicateFilters.Biolibrary_id}>{bioreplicateFilters.Biolibrary}</a>,
-
                 },
                 "Patient": {
                     title: 'Patient',
                     display:bioreplicateFilters => <a href={bioreplicateFilters.Patient}>{bioreplicateFilters.Patient.split("/")[2]}</a>,
-                    
                 },
             };
             console.log("biolibrary",this.bioreplicateFilters.biolibrary);

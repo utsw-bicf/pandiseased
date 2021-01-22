@@ -37,5 +37,21 @@
         "uuid": "3245ac16-1d07-4360-bb5c-a7f6dff52885",
         "accession": "KCELB987EAA",
         "submitter_comment":"This is a test for submitter_comment"
+    },
+    {
+        "biospecimen": "KCEBS087RNA",
+        "nucleic_acid_term_name": "DNA",
+        "status": "released",
+        "uuid": "86b12331-523d-4664-a492-c63ae4e2ddf7",
+        "accession": "KCELB987FAA",
+        "submitter_comment":"This is a test for submitter_comment"
+    },
+    {
+        "biospecimen": "KCEBS087RNA",
+        "nucleic_acid_term_name": "DNA",
+        "status": "released",
+        "uuid": "c0031917-a622-4200-a857-befc94641848",
+        "accession": "KCELB987GAA",
+        "submitter_comment":"This is a test for submitter_comment"
     }
 ]

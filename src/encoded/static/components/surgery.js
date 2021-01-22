@@ -33,7 +33,7 @@ class Surgery extends React.Component {
           hasPathology = true;
         }
         if (Object.keys(this.props.context.surgery_procedure).length > 0) {
-            hasProcedure = true;  
+            hasProcedure = true;
         }
          return (
             <div className={itemClass}>
