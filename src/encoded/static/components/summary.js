@@ -10,6 +10,7 @@ import { faVial } from "@fortawesome/free-solid-svg-icons";
 import { faDna } from "@fortawesome/free-solid-svg-icons";
 import { faDisease } from "@fortawesome/free-solid-svg-icons";
 import { PieChart, Pie, Sector, Cell } from 'recharts';
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import SummaryChart from './summaryChart';
 
 
@@ -109,6 +110,7 @@ class SummaryBody extends React.Component {
 
                         
                     </div>
+                    <h4>Histologic Subtypes</h4>
                     <PieChart width={400} height={400}>
                         <Pie
                         data={subtypeData}
@@ -119,6 +121,35 @@ class SummaryBody extends React.Component {
                         >
                         </Pie>
                     </PieChart>
+
+                    <h4>Stages at Diagnosis</h4>
+                    <PieChart width={400} height={400}>
+                        <Pie
+                        data={stageData}
+                        cx={200}
+                        cy={200}
+                        fill="#8884d8"
+                        dataKey="value"
+                        >
+                        </Pie>
+                    </PieChart>
+
+                    <h4>Specimen Inventory</h4>
+                    <BarChart
+                        width={500}
+                        height={300}
+                        data={specimenData}
+                        margin={{
+                        top: 5, right: 30, left: 20, bottom: 5,
+                        }}
+                    >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="value" fill="#8884d8" />
+                    </BarChart>
 
                     <SummaryChart chartId="summaryChart" data={context} ></SummaryChart>
 
