@@ -9,8 +9,8 @@ import { faHospitalUser } from "@fortawesome/free-solid-svg-icons";
 import { faVial } from "@fortawesome/free-solid-svg-icons";
 import { faDna } from "@fortawesome/free-solid-svg-icons";
 import { faDisease } from "@fortawesome/free-solid-svg-icons";
-import { PieChart, Pie, Sector, Cell } from 'recharts';
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import SummaryChart from './summaryChart';
 
 
@@ -272,5 +272,6 @@ Summary.propTypes = {
 };
 
 globals.contentViews.register(Summary, 'Summary');
+
 
 
