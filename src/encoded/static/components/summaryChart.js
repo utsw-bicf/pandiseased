@@ -21,11 +21,15 @@ class SummaryChart extends React.Component {
           ],
           responsive: true
         };
+        this.getPlotly = this.getPlotly.bind(this);
     }
 
     render() {
         return (
           <div>
+            <header>
+              <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+            </header>
             <div className="flex-container" >
     
               <div className="chart-main" >
@@ -56,11 +60,21 @@ class SummaryChart extends React.Component {
     }
 
     componentDidMount() {
-        this.plotly = window.Plotly;
-
-        this.drawChart();
+        this.getPlotly();
     }
+
+    getPlotly(){
+      if(typeof window.Plotly !== "undefined"){
+          this.plotly = window.Plotly;
+
+          this.drawChart();
+      }
+      else{
+          setTimeout(this.getPlotly, 250);
+      }
+  }
 }
 
 export default SummaryChart;
+
 

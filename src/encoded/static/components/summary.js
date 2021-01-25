@@ -9,7 +9,8 @@ import { faHospitalUser } from "@fortawesome/free-solid-svg-icons";
 import { faVial } from "@fortawesome/free-solid-svg-icons";
 import { faDna } from "@fortawesome/free-solid-svg-icons";
 import { faDisease } from "@fortawesome/free-solid-svg-icons";
-import SummaryChart from "./summaryChart";
+import { LineChart, Line } from 'recharts';
+import SummaryChart from './summaryChart';
 
 
 class SummaryBody extends React.Component {
@@ -63,6 +64,13 @@ class SummaryBody extends React.Component {
         let noteStyle = {
             fontSize: "20px"
         }
+        const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400},
+        {name: 'Page B', uv: 400, pv: 2400, amt: 2400},
+        {name: 'Page C', uv: 200, pv: 2400, amt: 2400},
+        {name: 'Page D', uv: 300, pv: 2400, amt: 2400},
+        {name: 'Page E', uv: 100, pv: 2400, amt: 2400},
+        {name: 'Page F', uv: 300, pv: 2400, amt: 2400}
+        ];
         return (
             <div className="summary-header">
                 <div className="summary-header__title_control">
@@ -104,6 +112,10 @@ class SummaryBody extends React.Component {
 
                         
                     </div>
+                    <LineChart width={400} height={400} data={data}>
+                        <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+                    </LineChart>
+
                     <SummaryChart chartId="summaryChart" data={context} ></SummaryChart>
 
                 </div>
@@ -163,4 +175,5 @@ Summary.propTypes = {
 };
 
 globals.contentViews.register(Summary, 'Summary');
+
 
