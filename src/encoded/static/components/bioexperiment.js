@@ -13,7 +13,6 @@ import { DbxrefList } from './dbxref';
 import { FetchedItems } from './fetched';
 // import { FileGallery } from './filegallery';
 import { FileGallery1 } from './filegallery1';
-import { CartToggle } from './cart';
 import { ProjectBadge } from './image';
 import { CartToggle } from './cart';
 import { singleTreatment, ItemAccessories, DisplayAsJson, InternalTags } from './objectutils';
