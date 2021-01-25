@@ -483,6 +483,29 @@ class Patient(Item):
                         "cm"
                     ]
                 },
+                "stage": {
+                    "title": "AJCC TNM Stage",
+                    "description": "AJCC TNM Stage",
+                    "type": "string",
+                    "enum": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "Not applicable",
+                        "Not available"
+                    ]
+                },
+                "ajcc_version": {
+                    "title": "AJCC Version",
+                    "description": "AJCC Version used for staging",
+                    "type": "string",
+                    "enum": [
+                        "6th edition",
+                        "7th edition",
+                        "8th edition"
+                    ]
+                },
                 "date": {
                     "title": "Surgery Date",
                     "type": "string",
@@ -574,6 +597,8 @@ class Patient(Item):
                             'path_report_id': path_report_obj.get('@id'),
                             'surgery': surgery_object.get('accession'),
                             'surgery_id': surgery_object.get('@id'),
+                            'stage': path_report_obj.get('ajcc_tnm_stage'),
+                            'ajcc_version': path_report_obj.get('ajcc_version'),
                             'date': date
                         }
 
@@ -1769,5 +1794,6 @@ def patient_basic_view(context, request):
         except KeyError:
             pass
     return filtered
+
 
 

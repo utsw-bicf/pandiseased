@@ -144,6 +144,9 @@
         "dominant_tumor.histology_filter": {
             "title": "Dominant Tumor"
         },
+        "dominant_tumor.stage": {
+            "title": "Dominant Tumor TNM Stage (at presentation)"
+        },
         "surgery.pathology_report.pathology_report_tumor_range":{
             "title": "Tumor Size Range"
         },
@@ -335,5 +338,6 @@
         },
     "changelog": "/profiles/changelogs/patient.md"
 }
+
 
 

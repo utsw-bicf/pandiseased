@@ -9,7 +9,7 @@ import { faHospitalUser } from "@fortawesome/free-solid-svg-icons";
 import { faVial } from "@fortawesome/free-solid-svg-icons";
 import { faDna } from "@fortawesome/free-solid-svg-icons";
 import { faDisease } from "@fortawesome/free-solid-svg-icons";
-import { LineChart, Line } from 'recharts';
+import { PieChart, Pie, Sector, Cell } from 'recharts';
 import SummaryChart from './summaryChart';
 
 
@@ -64,13 +64,10 @@ class SummaryBody extends React.Component {
         let noteStyle = {
             fontSize: "20px"
         }
-        const data = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400},
-        {name: 'Page B', uv: 400, pv: 2400, amt: 2400},
-        {name: 'Page C', uv: 200, pv: 2400, amt: 2400},
-        {name: 'Page D', uv: 300, pv: 2400, amt: 2400},
-        {name: 'Page E', uv: 100, pv: 2400, amt: 2400},
-        {name: 'Page F', uv: 300, pv: 2400, amt: 2400}
-        ];
+
+        const stageData = this.getStageData(facets)
+        const subtypeData = this.getSubtypeData(facets)
+        const specimenData = this.getSpecimenData(facets)
         return (
             <div className="summary-header">
                 <div className="summary-header__title_control">
@@ -112,15 +109,84 @@ class SummaryBody extends React.Component {
 
                         
                     </div>
-                    <LineChart width={400} height={400} data={data}>
-                        <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-                    </LineChart>
+                    <PieChart width={400} height={400}>
+                        <Pie
+                        data={subtypeData}
+                        cx={200}
+                        cy={200}
+                        fill="#8884d8"
+                        dataKey="value"
+                        >
+                        </Pie>
+                    </PieChart>
 
                     <SummaryChart chartId="summaryChart" data={context} ></SummaryChart>
 
                 </div>
             </div>
         );
+    }
+
+    getSubtypeData(facets){
+        let data = [];
+        let subtypes = facets.filter(obj => {
+            return obj.field === "dominant_tumor.histology_filter"
+          })
+        if (subtypes && subtypes.length > 0){
+            let terms = subtypes[0].terms;
+            let i;
+            for (i = 0; i < terms.length; i++) {
+                let subtype = terms[i];
+                data.push({
+                    name: subtype.key,
+                    value: subtype.doc_count
+                });
+
+            }
+
+        }
+        return data;
+
+    }
+    getStageData(facets){
+        let data = [];
+        let stages = facets.filter(obj => {
+            return obj.field === "dominant_tumor.stage"
+          })
+        if (stages && stages.length > 0){
+            let terms = stages[0].terms;
+            let i;
+            for (i = 0; i < terms.length; i++) {
+                let stage = terms[i];
+                data.push({
+                    name: stage.key,
+                    value: stage.doc_count
+                });
+
+            }
+
+        }
+        return data;
+    }
+    getSpecimenData(facets){
+        let data = [];
+        let samples = facets.filter(obj => {
+            return obj.field === "biospecimen.tissue_derivatives"
+          })
+        if (samples && samples.length > 0){
+            let terms = samples[0].terms;
+            let i;
+            for (i = 0; i < terms.length; i++) {
+                let sample = terms[i];
+                data.push({
+                    name: sample.key,
+                    value: sample.doc_count
+                });
+
+            }
+
+        }
+        return data;
     }
 }
 
