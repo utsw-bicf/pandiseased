@@ -9,8 +9,8 @@ import { faHospitalUser } from "@fortawesome/free-solid-svg-icons";
 import { faVial } from "@fortawesome/free-solid-svg-icons";
 import { faDna } from "@fortawesome/free-solid-svg-icons";
 import { faDisease } from "@fortawesome/free-solid-svg-icons";
-import { PieChart, Pie, Sector, Cell } from 'recharts';
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import SummaryChart from './summaryChart';
 
 
@@ -69,6 +69,9 @@ class SummaryBody extends React.Component {
         const stageData = this.getStageData(facets)
         const subtypeData = this.getSubtypeData(facets)
         const specimenData = this.getSpecimenData(facets)
+        let renderSpecimenLabel = function(entry) {
+            return entry.total;
+        }
         return (
             <div className="summary-header">
                 <div className="summary-header__title_control">
@@ -135,6 +138,7 @@ class SummaryBody extends React.Component {
                     </PieChart>
 
                     <h4>Specimen Inventory</h4>
+
                     <BarChart
                         width={500}
                         height={300}
@@ -143,12 +147,15 @@ class SummaryBody extends React.Component {
                         top: 5, right: 30, left: 20, bottom: 5,
                         }}
                     >
-                        <CartesianGrid strokeDasharray="3 3" />
+                        <CartesianGrid 
+                            vertical={false}
+                            stroke="#ebf3f0"
+                        />
                         <XAxis dataKey="name" />
-                        <YAxis />
+                        <YAxis hide/>
                         <Tooltip />
                         <Legend />
-                        <Bar dataKey="value" fill="#8884d8" />
+                        <Bar dataKey="total" fill="#8884d8" />
                     </BarChart>
 
                     <SummaryChart chartId="summaryChart" data={context} ></SummaryChart>
@@ -211,7 +218,7 @@ class SummaryBody extends React.Component {
                 let sample = terms[i];
                 data.push({
                     name: sample.key,
-                    value: sample.doc_count
+                    total: sample.doc_count
                 });
 
             }
@@ -219,6 +226,7 @@ class SummaryBody extends React.Component {
         }
         return data;
     }
+
 }
 
 SummaryBody.propTypes = {

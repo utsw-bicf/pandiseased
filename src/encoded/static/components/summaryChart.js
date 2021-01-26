@@ -6,6 +6,9 @@ class SummaryChart extends React.Component {
         super(props);
     
         this.data = this.props.data;
+        this.state = {
+          count: 0
+        };
         this.plotlyConfig = {
           displayModeBar: true,
           displaylogo: false,
@@ -21,7 +24,6 @@ class SummaryChart extends React.Component {
           ],
           responsive: true
         };
-        this.getPlotly = this.getPlotly.bind(this);
     }
 
     render() {
@@ -60,19 +62,18 @@ class SummaryChart extends React.Component {
     }
 
     componentDidMount() {
-        this.getPlotly();
-    }
-
-    getPlotly(){
       if(typeof window.Plotly !== "undefined"){
-          this.plotly = window.Plotly;
+        this.plotly = window.Plotly;
 
-          this.drawChart();
+        this.drawChart();
       }
       else{
-          setTimeout(this.getPlotly, 250);
+        this.setState({ count: this.state.count + 1 })
       }
-  }
+    }
+
+
+  
 }
 
 export default SummaryChart;
