@@ -66,25 +66,6 @@ class Source(Item):
     schema = load_schema('encoded:schemas/source.json')
     name_key = 'name'
 
-
-@collection(
-    name='treatments',
-    properties={
-        'title': 'Treatments',
-        'description': 'Listing Biosample Treatments',
-    })
-class Treatment(Item):
-    item_type = 'treatment'
-    schema = load_schema('encoded:schemas/treatment.json')
-    embedded = [
-    ]
-    set_status_up = [
-        'biosamples_used',
-        'antibodies_used',
-    ]
-    set_status_down = []
-
-
 @collection(
     name='documents',
     properties={
