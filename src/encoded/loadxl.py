@@ -567,12 +567,7 @@ PHASE1_PIPELINES = {
     'single_cell_rna_series': [
         remove_keys('related_datasets'),
     ],
-    'treatment_time_series': [
-        remove_keys('related_datasets'),
-    ],
-    'treatment_concentration_series': [
-        remove_keys('related_datasets'),
-    ],
+
     'aggregate_series': [
         remove_keys('related_datasets'),
     ],
@@ -593,9 +588,6 @@ PHASE1_PIPELINES = {
     ],
     'analysis_step': [
         remove_keys('parents')
-    ],
-    'treatment': [
-        remove_keys('biosamples_used')
     ],
     'biospecimen': [
         remove_keys('originated_from')
@@ -669,15 +661,11 @@ PHASE2_PIPELINES = {
     'single_cell_rna_series': [
         skip_rows_missing_all_keys('related_datasets'),
     ],
-    'treatment_time_series': [
-        skip_rows_missing_all_keys('related_datasets'),
-    ],
+
     'aggregate_series': [
         skip_rows_missing_all_keys('related_datasets'),
     ],
-    'treatment_concentration_series': [
-        skip_rows_missing_all_keys('related_datasets'),
-    ],
+
     'organism_development_series': [
         skip_rows_missing_all_keys('related_datasets'),
     ],
@@ -698,9 +686,6 @@ PHASE2_PIPELINES = {
     ],
     'analysis_step': [
         skip_rows_missing_all_keys('parents')
-    ],
-    'treatment': [
-        skip_rows_missing_all_keys('biosamples_used')
     ],
     'biospecimen': [
         skip_rows_missing_all_keys('originated_from')
