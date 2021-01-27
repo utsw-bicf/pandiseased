@@ -53,18 +53,6 @@ class Award(Item):
     }
 
 
-@collection(
-    name='organisms',
-    unique_key='organism:name',
-    properties={
-        'title': 'Organisms',
-        'description': 'Listing of all registered organisms',
-    })
-class Organism(Item):
-    item_type = 'organism'
-    schema = load_schema('encoded:schemas/organism.json')
-    name_key = 'name'
-
 
 @collection(
     name='sources',
@@ -130,99 +118,6 @@ class Platform(Item):
 
 
 @collection(
-    name='libraries',
-    unique_key='accession',
-    properties={
-        'title': 'Libraries',
-        'description': 'Listing of Libraries',
-    })
-class Library(Item):
-    item_type = 'library'
-    schema = load_schema('encoded:schemas/library.json')
-    name_key = 'accession'
-    embedded = [
-        'biosample',
-        'biosample.donor',
-        'biosample.donor.organism',
-        'biosample.biosample_ontology'
-    ]
-    set_status_up = [
-        'biosample',
-        'documents',
-        'source',
-        'treatments',
-    ]
-    set_status_down = []
-    rev = {'replicates': ('Replicate', 'library')}
-
-    @calculated_property(condition='nucleic_acid_term_name', schema={
-        "title": "Nucleic acid term ID",
-        "type": "string",
-    })
-    def nucleic_acid_term_id(self, request, nucleic_acid_term_name):
-        term_lookup = {
-            'DNA': 'SO:0000352',
-            'RNA': 'SO:0000356',
-            'polyadenylated mRNA': 'SO:0000871',
-            'miRNA': 'SO:0000276',
-            'protein': 'SO:0000104'
-        }
-        term_id = None
-        if nucleic_acid_term_name in term_lookup:
-            term_id = term_lookup.get(nucleic_acid_term_name)
-        return term_id
-
-    @calculated_property(condition='depleted_in_term_name', schema={
-        "title": "Depleted in term ID",
-        "type": "string",
-    })
-    def depleted_in_term_id(self, request, depleted_in_term_name):
-        term_lookup = {
-            'rRNA': 'SO:0000252',
-            'polyadenylated mRNA': 'SO:0000871',
-            'capped mRNA': 'SO:0000862'
-        }
-        term_id = list()
-        for term_name in depleted_in_term_name:
-            if term_name in term_lookup:
-                term_id.append(term_lookup.get(term_name))
-            else:
-                term_id.append('Term ID unknown')
-        return term_id
-
-    @calculated_property(schema={
-        "title": "Replicates",
-        "type": "array",
-        "uniqueItems": True,
-        "items": {
-            "type": ['string', 'object'],
-            "linkFrom": "Replicate.library",
-        },
-    })
-    def replicates(self, request, replicates):
-        return paths_filtered_by_status(request, replicates)
-
-    @calculated_property(condition='replicates', schema={
-        "title": "Antibodies",
-        "description": "For Immunoprecipitation assays, the antibody used.",
-        "comment": "See antibody_lot.json for available identifiers.",
-        "type": "array",
-        "uniqueItems": True,
-        "items": {
-            "type": "string",
-            "linkTo": "AntibodyLot"
-        }
-    })
-    def antibodies(self, request, replicates):
-        antibodies = []
-        for rep_id in replicates:
-            rep = request.embed(rep_id, '@@object?skip_calculated=true')
-            if 'antibody' in rep:
-                antibodies.append(rep['antibody'])
-        return antibodies or None
-
-
-@collection(
     name='publications',
     unique_key='publication:identifier',
     properties={
@@ -266,28 +161,7 @@ class Publication(Item):
     def publication_data(self, request, publication_data):
         return paths_filtered_by_status(request, publication_data)
 
-    @calculated_property(condition='datasets', schema={
-        "title": "Datasets",
-        "description": "The datasets referred to by the publication.",
-        "comment": "Do not submit, this is calculated using the references property on dataset objects.",
-        "type": "array",
-        "uniqueItems": True,
-        "notSubmittable": True,
-        "items": {
-            "type": ['string', 'object'],
-            "linkFrom":
-                "Dataset.references"
-        },
-    })
-    def datasets(self, request, datasets):
-        allowed_dataset_types = ["/experiments/",
-                                 "/functional-characterization-experiments/",
-                                 "/annotations/", "/references/"]
-        filtered = set()
-        for d in datasets:
-            if d.startswith(tuple(allowed_dataset_types)):
-                filtered.add(d)
-        return paths_filtered_by_status(request, filtered)
+
 
 
 @collection(
