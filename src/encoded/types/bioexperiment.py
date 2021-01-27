@@ -17,11 +17,6 @@ from .shared_calculated_properties import (
     CalculatedVisualize
 )
 
-from .biosample import (
-    construct_biosample_summary,
-    generate_summary_dictionary
-)
-
 from .assay_data import assay_terms
 
 

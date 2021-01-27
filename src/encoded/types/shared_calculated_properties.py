@@ -6,8 +6,6 @@ from encoded.vis_defines import (
     vis_format_url,
     browsers_available
     )
-from .biosample import construct_biosample_summary
-from .shared_biosample import biosample_summary_information
 from .base import (
     paths_filtered_by_status
 )
@@ -206,70 +204,6 @@ class CalculatedVisualize:
             return viz
         else:
             return None
-
-
-class CalculatedBiosampleSummary:
-    @calculated_property(schema={
-        "title": "Biosample summary",
-        "type": "string",
-    })
-    def biosample_summary(self,
-                          request,
-                          replicates=None):
-        drop_age_sex_flag = False
-        dictionaries_of_phrases = []
-        biosample_accessions = set()
-        if replicates is not None:
-            for rep in replicates:
-                replicateObject = request.embed(rep, '@@object')
-                if replicateObject['status'] == 'deleted':
-                    continue
-                if 'library' in replicateObject:
-                    libraryObject = request.embed(replicateObject['library'], '@@object')
-                    if libraryObject['status'] == 'deleted':
-                        continue
-                    if 'biosample' in libraryObject:
-                        biosampleObject = request.embed(libraryObject['biosample'], '@@object')
-                        if biosampleObject['status'] == 'deleted':
-                            continue
-                        if biosampleObject['accession'] not in biosample_accessions:
-                            biosample_accessions.add(biosampleObject['accession'])
-                            biosample_info = biosample_summary_information(request, biosampleObject)
-                            biosample_summary_dictionary = biosample_info[0]
-                            biosample_drop_age_sex_flag = biosample_info[1]
-                            dictionaries_of_phrases.append(biosample_summary_dictionary)
-                            if biosample_drop_age_sex_flag is True:
-                                drop_age_sex_flag = True
-
-        if drop_age_sex_flag is True:
-            sentence_parts = [
-                'strain_background',
-                'experiment_term_phrase',
-                'phase',
-                'fractionated',
-                'synchronization',
-                'modifications_list',
-                'originated_from',
-                'treatments_phrase',
-                'depleted_in',
-                'disease_term_name'
-            ]
-        else:
-            sentence_parts = [
-                'strain_background',
-                'experiment_term_phrase',
-                'phase',
-                'fractionated',
-                'sex_stage_age',
-                'synchronization',
-                'modifications_list',
-                'originated_from',
-                'treatments_phrase',
-                'depleted_in',
-                'disease_term_name'
-            ]
-        if len(dictionaries_of_phrases) > 0:
-            return construct_biosample_summary(dictionaries_of_phrases, sentence_parts)
 
 
 class CalculatedReplicates:
