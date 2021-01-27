@@ -6,9 +6,6 @@ class SummaryChart extends React.Component {
         super(props);
     
         this.data = this.props.data;
-        this.state = {
-          count: 0
-        };
         this.plotlyConfig = {
           displayModeBar: true,
           displaylogo: false,
@@ -68,7 +65,7 @@ class SummaryChart extends React.Component {
         this.drawChart();
       }
       else{
-        this.setState({ count: this.state.count + 1 })
+        window.location.reload();
       }
     }
 
