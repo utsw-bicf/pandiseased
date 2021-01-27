@@ -109,8 +109,7 @@ class Publication(Item):
     item_type = 'publication'
     schema = load_schema('encoded:schemas/publication.json')
     rev = {
-        'publication_data': ('PublicationData', 'references'),
-        'datasets': ('Dataset', 'references')
+        
     }
 
     def unique_keys(self, properties):
@@ -129,18 +128,6 @@ class Publication(Item):
             return int(date_published[:4])
         else:
             return None
-
-    @calculated_property(schema={
-        "title": "Publication Data",
-        "type": "array",
-        "uniqueItems": True,
-        "items": {
-            "type": ['string', 'object'],
-            "linkFrom": "PublicationData.references",
-        },
-    })
-    def publication_data(self, request, publication_data):
-        return paths_filtered_by_status(request, publication_data)
 
 
 
@@ -193,3 +180,4 @@ class SoftwareVersion(Item):
         root = find_root(self)
         software = root.get_by_uuid(properties['software'])
         return software.__ac_local_roles__()
+

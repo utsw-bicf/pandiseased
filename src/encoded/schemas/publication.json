@@ -212,15 +212,8 @@
         },
         "published_by": {
             "title": "Published by"
-        },
-        "datasets": {
-            "type": "exists",
-            "title": "Associated dataset"
-        },
-        "publication_data": {
-            "type": "exists",
-            "title": "Publication file data"
         }
+
     },
     "columns": {
         "title": {
@@ -286,4 +279,5 @@
     "changelog": "/profiles/changelogs/publication.md"
 
 }
+
 

@@ -540,18 +540,14 @@ PHASE1_PIPELINES = {
     'human_donor': [
         remove_keys('parents', 'children', 'siblings', 'twin'),
     ],
-    'publication': [
-        remove_keys('datasets'),
-    ],
+
     'annotation': [
         remove_keys('related_files', 'software_used'),
     ],
     'project': [
         remove_keys('related_files'),
     ],
-    'publication_data': [
-        remove_keys('related_files'),
-    ],
+
     'reference': [
         remove_keys('related_files', 'software_used'),
     ],
@@ -643,9 +639,6 @@ PHASE2_PIPELINES = {
     'project': [
         skip_rows_missing_all_keys('related_files'),
     ],
-    'publication_data': [
-        skip_rows_missing_all_keys('related_files'),
-    ],
     'reference': [
         skip_rows_missing_all_keys('related_files', 'software_used'),
     ],
@@ -677,9 +670,6 @@ PHASE2_PIPELINES = {
     ],
     'matched_set': [
         skip_rows_missing_all_keys('related_datasets'),
-    ],
-    'publication': [
-        skip_rows_missing_all_keys('datasets'),
     ],
     'file': [
         skip_rows_missing_all_keys('derived_from', 'controlled_by', 'supersedes')
@@ -734,3 +724,4 @@ def load_test_data(app):
     inserts = resource_filename('encoded', 'tests/data/inserts/')
     docsdir = [resource_filename('encoded', 'tests/data/documents/')]
     load_all(testapp, inserts, docsdir)
+
