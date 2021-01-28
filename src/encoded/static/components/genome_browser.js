@@ -4,7 +4,7 @@ import _ from 'underscore';
 import { FetchedData, Param } from './fetched';
 import { BrowserFeat } from './browserfeat';
 import { filterForVisualizableFiles } from './objectutils';
-import AutocompleteBox from './region_search';
+//import AutocompleteBox from './region_search';
 
 const domainName = 'https://www.encodeproject.org';
 
@@ -654,11 +654,7 @@ class GenomeBrowser extends React.Component {
                                                 url={`/suggest/?genome=${this.state.genome}&q=${this.state.searchTerm}`}
                                                 type="json"
                                             />
-                                            <AutocompleteBox
-                                                name="annotation"
-                                                userTerm={this.state.searchTerm}
-                                                handleClick={this.handleAutocompleteClick}
-                                            />
+
                                         </FetchedData>
                                     : null}
                                 </div>
@@ -705,3 +701,4 @@ GenomeBrowser.contextTypes = {
 };
 
 export default GenomeBrowser;
+

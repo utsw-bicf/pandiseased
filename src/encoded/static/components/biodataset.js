@@ -13,7 +13,6 @@ import { auditDecor } from './audit';
 import Status from './status';
 import pubReferenceList from './reference';
 import { donorDiversity, publicDataset, AlternateAccession, DisplayAsJson, InternalTags } from './objectutils';
-import { softwareVersionList } from './software';
 import { SortTablePanel, SortTable } from './sorttable';
 import { ProjectBadge } from './image';
 import { DocumentsPanelReq } from './doc';
@@ -638,3 +637,4 @@ BioseriesComponent.contextTypes = {
 const Bioseries = auditDecor(BioseriesComponent);
 
 globals.contentViews.register(Bioseries, 'Bioseries');
+

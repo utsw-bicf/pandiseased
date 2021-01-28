@@ -8,12 +8,9 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from '../libs/ui/modal';
 import { collapseIcon } from '../libs/svg-icons';
 import { auditDecor, auditsDisplayed, ObjectAuditIcon } from './audit';
 import { FetchedData, Param } from './fetched';
-import GenomeBrowser from './genome_browser';
 import * as globals from './globals';
 import { Graph, JsonGraph, GraphException } from './graph';
 import { requestFiles, DownloadableAccession, computeAssemblyAnnotationValue, filterForVisualizableFiles } from './objectutils';
-import { qcIdToDisplay } from './quality_metric';
-import { softwareVersionList } from './software';
 import { SortTablePanel, SortTable } from './sorttable';
 import Status from './status';
 import { visOpenBrowser, visFilterBrowserFiles, visFileSelectable, visSortBrowsers, visMapBrowserName } from './vis_defines';
@@ -3079,40 +3076,7 @@ FilterMenu.defaultProps = {
 };
 
 
-// Display a QC button in the file modal.
-class FileQCButton extends React.Component {
-    constructor() {
-        super();
 
-        // Bind `this` to non-React methods.
-        this.handleClick = this.handleClick.bind(this);
-    }
-
-    handleClick() {
-        const node = {
-            '@type': ['QualityMetric'],
-            parent: this.props.biofile,
-            ref: this.props.qc,
-            schemas: this.props.schemas,
-        };
-        this.props.handleClick(node);
-    }
-
-    render() {
-        const qcName = qcIdToDisplay(this.props.qc);
-        if (qcName) {
-            return <button className="file-qc-btn" onClick={this.handleClick}>{qcName}</button>;
-        }
-        return null;
-    }
-}
-
-FileQCButton.propTypes = {
-    qc: PropTypes.object.isRequired, // QC object we're directing to
-    file: PropTypes.object.isRequired, // File this QC object is attached to
-    schemas: PropTypes.object.isRequired, // All schemas from /profiles
-    handleClick: PropTypes.func.isRequired, // Function to open a modal to the given object
-};
 
 
 // Display the metadata of the selected file in the graph
@@ -3225,12 +3189,6 @@ const FileDetailView = function FileDetailView(node, qcClick, auditIndicators, a
                         </div>
                     : null}
 
-                    {selectedFile.analysis_step_version && selectedFile.analysis_step_version.software_versions && selectedFile.analysis_step_version.software_versions.length > 0 ?
-                        <div data-test="software">
-                            <dt>Software</dt>
-                            <dd>{softwareVersionList(selectedFile.analysis_step_version.software_versions)}</dd>
-                        </div>
-                    : null}
 
                     {node.metadata.contributing && selectedFile.biodataset ?
                         <div data-test="contributedfrom">
@@ -3270,16 +3228,7 @@ const FileDetailView = function FileDetailView(node, qcClick, auditIndicators, a
                         </div>
                     : null}
 
-                    {fileQualityMetrics.length > 0 ?
-                        <div data-test="fileqc">
-                            <dt>File quality metrics</dt>
-                            <dd className="file-qc-buttons">
-                                {fileQualityMetrics.map(qc =>
-                                    <FileQCButton key={qc['@id']} qc={qc} file={selectedFile} schemas={node.schemas} handleClick={qcClick} />
-                                )}
-                            </dd>
-                        </div>
-                    : null}
+                    
 
                     {selectedFile.submitter_comment ?
                         <div data-test="submittercomment">
@@ -3378,3 +3327,4 @@ export const CoalescedDetailsView = function CoalescedDetailsView(node) {
 };
 
 globals.graphDetail.register(CoalescedDetailsView, 'Coalesced');
+

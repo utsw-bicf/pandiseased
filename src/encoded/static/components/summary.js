@@ -10,7 +10,7 @@ import * as globals from './globals';
 import { FacetList, ClearFilters } from './search';
 import { getObjectStatuses, sessionToAccessLevel } from './status';
 import { ViewControls } from './view_controls';
-import BodyMap, { systemsField, organField } from './body_map';
+
 
 /**
  * Generate an array of data from one facet bucket for displaying in a chart, with one array entry
@@ -346,8 +346,8 @@ class SummaryBody extends React.Component {
         });
         const parsedUrl = url.parse(this.props.context['@id']);
         const query = new QueryString(parsedUrl.query);
-        query.deleteKeyValue(systemsField);
-        query.deleteKeyValue(organField);
+        
+  
         query.replaceKeyValue(organismField, e.currentTarget.id, '');
         const href = `?${query.format()}`;
         this.context.navigate(href);
@@ -376,7 +376,7 @@ class SummaryBody extends React.Component {
                                 className={`organism-button ${term.replace(' ', '-')} ${this.state.selectedOrganism === term ? 'active' : ''}`}
                                 key={term}
                             >
-                                <img src={`/static/img/bodyMap/organisms/${term.replace(' ', '-')}.png`} alt={term} />
+                                
                                 <span>{term}</span>
                             </button>
                         )}
@@ -390,7 +390,7 @@ class SummaryBody extends React.Component {
                     {(this.state.selectedOrganism === 'Homo sapiens') ?
                         <React.Fragment>
                             <div className="flex-container">
-                                <BodyMap context={this.props.context} />
+                               
                                 <SummaryData context={this.props.context} displayCharts={'donuts'} />
                             </div>
                             <div className="summary-content">
@@ -442,3 +442,4 @@ Summary.propTypes = {
 };
 
 globals.contentViews.register(Summary, 'Summary');
+
