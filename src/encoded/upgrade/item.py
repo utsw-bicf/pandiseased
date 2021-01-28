@@ -4,8 +4,6 @@ import re
 @upgrade_step('document', '6', '7')
 @upgrade_step('platform', '4', '5')
 @upgrade_step('publication', '3', '4')
-@upgrade_step('software', '3', '4')
-@upgrade_step('software_version', '2', '3')
 @upgrade_step('source', '3', '4')
 @upgrade_step('user', '4', '5')
 def item_alias_tighten(value, system):
@@ -68,9 +66,6 @@ def item_alias_tighten(value, system):
 
 @upgrade_step('page', '2', '3')
 @upgrade_step('image', '1', '2')
-
-@upgrade_step('software', '4', '5')
-@upgrade_step('software_version', '3', '4')
 
 @upgrade_step('user', '5', '6')
 @upgrade_step('platform', '5', '6')
