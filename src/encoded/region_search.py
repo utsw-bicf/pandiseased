@@ -264,111 +264,6 @@ def region_search(context, request):
         'notification': '',
         'filters': []
     }
-    principals = request.effective_principals
-    es = request.registry[ELASTIC_SEARCH]
-    snp_es = request.registry['snp_search']
-    region = request.params.get('region', '*')
-    region_inside_peak_status = False
-
-
-    # handling limit
-    size = request.params.get('limit', 25)
-    if size in ('all', ''):
-        size = 99999
-    else:
-        try:
-            size = int(size)
-        except ValueError:
-            size = 25
-    if region == '':
-        region = '*'
-
-    assembly = request.params.get('genome', '*')
-    result['assembly'] = _GENOME_TO_ALIAS.get(assembly,'GRCh38')
-    annotation = request.params.get('annotation', '*')
-    chromosome, start, end = ('', '', '')
-
-    if annotation != '*':
-        if annotation.lower().startswith('ens'):
-            chromosome, start, end = get_ensemblid_coordinates(annotation, assembly)
-        else:
-            chromosome, start, end = get_annotation_coordinates(es, annotation, assembly)
-    elif region != '*':
-        region = region.lower()
-        if region.startswith('rs'):
-            sanitized_region = sanitize_rsid(region)
-            chromosome, start, end = get_rsid_coordinates(sanitized_region, assembly)
-            region_inside_peak_status = True
-        elif region.startswith('ens'):
-            chromosome, start, end = get_ensemblid_coordinates(region, assembly)
-        elif region.startswith('chr'):
-            chromosome, start, end = sanitize_coordinates(region)
-    else:
-        chromosome, start, end = ('', '', '')
-    # Check if there are valid coordinates
-    if not chromosome or not start or not end:
-        result['notification'] = 'No annotations found'
-        return result
-    else:
-        result['coordinates'] = '{chr}:{start}-{end}'.format(
-            chr=chromosome, start=start, end=end
-        )
-
-    # Search for peaks for the coordinates we got
-    try:
-        # including inner hits is very slow
-        # figure out how to distinguish browser requests from .embed method requests
-        if 'peak_metadata' in request.query_string:
-            peak_query = get_peak_query(start, end, with_inner_hits=True, within_peaks=region_inside_peak_status)
-        else:
-            peak_query = get_peak_query(start, end, within_peaks=region_inside_peak_status)
-        peak_results = snp_es.search(body=peak_query,
-                                     index=chromosome.lower(),
-                                     doc_type=_GENOME_TO_ALIAS[assembly],
-                                     size=99999)
-    except Exception:
-        result['notification'] = 'Error during search'
-        return result
-    file_uuids = []
-    for hit in peak_results['hits']['hits']:
-        if hit['_id'] not in file_uuids:
-            file_uuids.append(hit['_id'])
-    file_uuids = list(set(file_uuids))
-    result['notification'] = 'No results found'
-
-
-    # if more than one peak found return the experiments with those peak files
-    uuid_count = len(file_uuids)
-    if uuid_count > MAX_CLAUSES_FOR_ES:
-        log.error("REGION_SEARCH WARNING: region with %d file_uuids is being restricted to %d" % \
-                                                            (uuid_count, MAX_CLAUSES_FOR_ES))
-        file_uuids = file_uuids[:MAX_CLAUSES_FOR_ES]
-        uuid_count = len(file_uuids)
-
-    if uuid_count:
-        query = get_filtered_query('', [], set(), principals, ['Experiment'])
-        del query['query']
-        query['post_filter']['bool']['must'].append({
-            'terms': {
-                'embedded.files.uuid': file_uuids
-            }
-        })
-        used_filters = set_filters(request, query, result)
-        used_filters['files.uuid'] = file_uuids
-        query['aggs'] = set_facets(_FACETS, used_filters, principals, ['Experiment'])
-        schemas = (types[item_type].schema for item_type in ['Experiment'])
-        es_results = es.search(
-            body=query, index='experiment', doc_type='experiment', size=size, request_timeout=60
-        )
-        result['@graph'] = list(format_results(request, es_results['hits']['hits']))
-        result['total'] = total = es_results['hits']['total']
-        result['facets'] = format_facets(es_results, _FACETS, used_filters, schemas, total, principals)
-        result['peaks'] = list(peak_results['hits']['hits'])
-        result['download_elements'] = get_peak_metadata_links(request)
-        if result['total'] > 0:
-            result['notification'] = 'Success'
-            position_for_browser = format_position(result['coordinates'], 200)
-            result.update(search_result_actions(request, ['Experiment'], es_results, position=position_for_browser))
 
     return result
 
@@ -765,43 +660,12 @@ def format_results(request, hits, result=None):
 
 def search_result_actions(request, doc_types, es_results, position=None):
     BATCH_DOWNLOAD_DOC_TYPES = [
-        ['Experiment'],
+      
         ['Annotation'],
     ]
     actions = {}
     aggregations = es_results['aggregations']
 
-    # generate batch hub URL for experiments
-    # TODO we could enable them for Datasets as well here, but not sure how well it will work
-    if doc_types == ['Experiment'] or doc_types == ['Annotation']:
-        viz = {}
-        for bucket in aggregations['assembly']['assembly']['buckets']:
-            if bucket['doc_count'] > 0:
-                assembly = bucket['key']
-                if assembly in viz:  # mm10 and mm10-minimal resolve to the same thing
-                    continue
-                search_params = request.query_string.replace('&', ',,')
-                if not request.params.getall('assembly') \
-                or assembly in request.params.getall('assembly'):
-                    # filter  assemblies that are not selected
-                    hub_url = request.route_url('batch_hub', search_params=search_params,
-                                                txt='hub.txt')
-                    browser_urls = {}
-                    pos = None
-                    if 'region-search' in request.url and position is not None:
-                        pos = position
-                    ucsc_url = vis_format_url("ucsc", hub_url, assembly, pos)
-                    if ucsc_url is not None:
-                        browser_urls['UCSC'] = ucsc_url
-                    ensembl_url = vis_format_url("ensembl", hub_url, assembly, pos)
-                    if ensembl_url is not None:
-                        browser_urls['Ensembl'] = ensembl_url
-                    if browser_urls:
-                        viz[assembly] = browser_urls
-                        #actions.setdefault('visualize_batch', {})[assembly] =\
-                                #browser_urls  # formerly 'batch_hub'
-        if viz:
-            actions.setdefault('visualize_batch', viz)
 
     # generate batch download URL for experiments and annotation
     # batch download disabled for region-search results
@@ -818,3 +682,4 @@ def search_result_actions(request, doc_types, es_results, position=None):
             search_params='?' + request.query_string
         )
     return actions
+

@@ -136,18 +136,8 @@ def index_settings():
 
 
 def encoded_regionable_datasets(request, restrict_to_assays=[]):
-    '''return list of all dataset uuids eligible for regions'''
 
-    encoded_es = request.registry[ELASTIC_SEARCH]
-    encoded_INDEX = request.registry.settings['snovault.elasticsearch.index']
-
-    # basics... only want uuids of experiments that are released
-    query = '/search/?type=Experiment&field=uuid&status=released&limit=all'
-    # Restrict to just these assays
-    for assay in restrict_to_assays:
-        query += '&assay_term_name=' + assay
-    results = request.embed(query)['@graph']
-    return [ result['uuid'] for result in results ]
+    return [ ]
 
 
 class RegionIndexerState(IndexerState):
@@ -485,16 +475,8 @@ class RegionIndexer(Indexer):
         return True
 
     def encoded_candidate_dataset(self, dataset):
-        '''returns True if an encoded dataset may have files that should be in regions es'''
-        if 'Experiment' not in dataset['@type']:  # Only experiments?
-            return False
 
-        if dataset.get('assay_term_name','unknown') not in list(ENCODED_REGION_REQUIREMENTS.keys()):
-            return False
-
-        if len(dataset.get('files',[])) == 0:
-            return False
-        return True
+        return False
 
     def in_regions_es(self, id):
         '''returns True if an id is in regions es'''
@@ -662,3 +644,4 @@ class RegionIndexer(Indexer):
             return self.add_to_regions_es(afile['uuid'], assembly, assay_term_name, file_data, 'encoded')
 
         return False
+
