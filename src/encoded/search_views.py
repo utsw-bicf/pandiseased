@@ -52,7 +52,6 @@ def includeme(config):
 
 DEFAULT_ITEM_TYPES = [
     'Award',
-    'Dataset',
     'Page',
     'Publication',
     'Biofile',
@@ -415,3 +414,4 @@ def audit(context, request):
         ]
     )
     return fr.render()
+
