@@ -597,33 +597,7 @@
       ]
     }
     },
-    {
-        "name": "about",
-        "title": "About",
-        "lab": "thomas-gingeras",
-        "status": "released",
-        "submitted_by": "dignissim.euismod@amet.habitant",
-        "uuid": "39350bd7-a476-43fe-b79f-ce2a91ca8e37",
-        "layout": {
-            "rows": [
-                {
-                    "cols": [
-                        {
-                            "className": "col-md-12 class_override",
-                            "blocks": ["#block1"]
-                        }
-                    ]
-                }
-            ],
-            "blocks": [
-                {
-                    "@id": "#block1",
-                    "@type": "richtextblock",
-                    "body": "<h1>About</h1>"
-                }
-            ]
-        }
-    },
+
     {
         "title": "hif2 resistance shows kidney cancer dependency",
         "news": true,
